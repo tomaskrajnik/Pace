@@ -50,14 +50,14 @@ export function validateFirebaseIdToken(req: any, res: any, next: any) {
 export function validateUserHasAccess(req: any, res: any, next: any) {
   paceLoggingService.log("Check if user is authorized to access the users data ");
   const { uid } = req.params;
-  const { user } = req;
-  if (!uid || !user) {
+  const { user_id } = req;
+  if (!uid || !user_id) {
     paceLoggingService.error("No uid or id token provided");
     return sendResponse(res, HttpStatusCode.BAD_REQUEST, { error: "No uid or id token provided" });
   }
 
-  if (uid !== user) {
-    paceLoggingService.error("Unauthorized to access this endpoint", { uid, userID: user });
+  if (uid !== user_id) {
+    paceLoggingService.error("Unauthorized to access this endpoint", { uid, userID: user_id });
     return sendResponse(res, HttpStatusCode.BAD_REQUEST, { error: "Unauthorized to access this endpoint" });
   }
 

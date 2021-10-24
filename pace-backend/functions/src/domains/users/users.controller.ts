@@ -42,7 +42,7 @@ export async function getCurrentUser(req: any, res: any) {
   const {
     user: { user_id: uid },
   } = req;
-
+  paceLoggingService.log("users/current", { uid });
   try {
     const user = await userService.findUserInFirestore(uid);
     if (!user)
@@ -100,4 +100,52 @@ export async function updateUser(req: any, res: any) {
     paceLoggingService.error(`Error - users/update/${uid}`, err);
     return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
   }
+}
+
+/**
+ * @param  {any} req
+ * @param  {any} res
+ */
+export async function requestPasswordReset(req: any, res: any) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
+      errors: errors.array(),
+    });
+
+  const { email } = req.body;
+  paceLoggingService.log("users/request-password-reset", email);
+
+  try {
+    const user = await userService.findUserInFirebaseByEmail(email);
+    if (!user)
+      return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
+        errors: "User with this email is not registered",
+      });
+
+    const link = await authService.generatePasswordResetLink(email);
+    //TODO send email to the user
+  } catch (err) {
+    paceLoggingService.error(`Error - users/request-password-reset/${email}`, err);
+    return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
+  }
+}
+
+/**
+ * @param  {any} req
+ * @param  {any} res
+ */
+export async function deleteUser(req: any, res: any) {
+  const { id: uid } = req.params;
+
+  paceLoggingService.log("users/delete", uid);
+
+  if (!uid)
+    return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
+      errors: "No user id provided.",
+    });
+
+  const response = await userService.deleteUser(uid);
+  if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, response.error);
+  return sendResponse(res, HttpStatusCode.OK, response);
 }

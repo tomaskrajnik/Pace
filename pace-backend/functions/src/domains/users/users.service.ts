@@ -22,7 +22,7 @@ class UserService {
   }
 
   /**
-   * Update firebase user information
+   * Update Pace user information
    * @param {string} userId
    * @param {object} data
    * @returns {object} firebase response

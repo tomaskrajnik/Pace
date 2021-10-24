@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateFirebaseIdToken } from "../../shared/middleware/auth.middleware";
 import { validateRequest, ValidationRouteTypes } from "../../utils/validation";
-import { getCurrentUser, signup } from "./users.controller";
+import { getCurrentUser, requestPasswordReset, signup } from "./users.controller";
 
 const userRouter = Router();
 
@@ -46,5 +46,24 @@ userRouter.post("/signup", validateRequest(ValidationRouteTypes.Signup), signup)
  * @returns {User.model} user
  */
 userRouter.get("/current", validateFirebaseIdToken, getCurrentUser);
+
+/**
+ * Generate and sends password reset link to the user
+ * The rest is handled by Google auth
+ * @route POST /users/password-reset-link
+ * @returns {void}
+ */
+userRouter.post(
+  "/request-password-reset/",
+  validateRequest(ValidationRouteTypes.RequestPasswordReset),
+  requestPasswordReset
+);
+
+/**
+ * Delete user
+ * @route DELETE /users/:id
+ * @returns {void}
+ */
+userRouter.delete;
 
 export { userRouter };

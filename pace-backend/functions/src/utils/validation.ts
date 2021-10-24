@@ -5,6 +5,7 @@ export const enum ValidationRouteTypes {
   Signin = "signin",
   Registered = "registered",
   UpdateUserInfo = "updateUser",
+  RequestPasswordReset = "requestPasswordReset",
 }
 
 export const validateRequest = (route: ValidationRouteTypes) => {
@@ -27,6 +28,9 @@ export const validateRequest = (route: ValidationRouteTypes) => {
       ];
     }
     case ValidationRouteTypes.Registered: {
+      return body("email").isEmail().normalizeEmail();
+    }
+    case ValidationRouteTypes.RequestPasswordReset: {
       return body("email").isEmail().normalizeEmail();
     }
     case ValidationRouteTypes.UpdateUserInfo: {

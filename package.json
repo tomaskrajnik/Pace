@@ -1,0 +1,26 @@
+{
+  "name": "pace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viktorkacenak/Pace.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viktorkacenak/Pace/issues"
+  },
+  "homepage": "https://github.com/viktorkacenak/Pace#readme",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0"
+  },
+  "devDependencies": {
+    "husky": "^7.0.4"
+  }
+}

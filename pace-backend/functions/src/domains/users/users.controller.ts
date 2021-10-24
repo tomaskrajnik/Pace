@@ -57,7 +57,7 @@ export async function getCurrentUser(req: any, res: any) {
  * @param  {any} req
  * @param  {any} res
  */
-export async function registered(req: any, res: any) {
+export async function isRegistered(req: any, res: any) {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return sendResponse(res, HttpStatusCode.BAD_REQUEST, {

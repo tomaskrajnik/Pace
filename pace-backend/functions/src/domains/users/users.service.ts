@@ -22,6 +22,32 @@ class UserService {
   }
 
   /**
+   * Create Pace user
+   * @param {string}  firstName
+   * @param {string}  lastName
+   * @param {string}  email
+   * @param {string}  password
+   * @returnType {Promise}
+   */
+  public async createPaceUser(data: SignUpRequest): Promise<User> {
+    const { uid, email, name, jobTitle, companyName, photoUrl } = data;
+
+    const defaultUserProps: Partial<User> = {
+      createdAt: Date.now(),
+      emailVerified: false,
+      photoUrl: photoUrl ?? "",
+      jobTitle: jobTitle ?? "",
+      companyName: companyName ?? "",
+    };
+
+    const user = { email, name, ...defaultUserProps };
+    await db.collection(databaseCollections.USERS).doc(uid).set(user);
+
+    paceLoggingService.log(`${UserService.name}.${this.createPaceUser.name} Creating pace user ${{ uid, ...user }}`);
+    return { ...user, uid } as User;
+  }
+
+  /**
    * Update Pace user information
    * @param {string} userId
    * @param {object} data

@@ -1,8 +1,6 @@
 import * as _ from "lodash";
-import { db, fbAdmin } from "../../shared/database/admin";
+import { fbAdmin } from "../../shared/database/admin";
 import { userService } from "../users/users.service";
-import { databaseCollections } from "../../shared/enums/database-collections.enum";
-import { User } from "../users/users.model";
 import { paceLoggingService } from "../../utils/services/logger";
 
 class AuthService {
@@ -40,35 +38,9 @@ class AuthService {
       return { error: "User already registered" };
     }
 
-    const user = await this.createPaceUser(data);
+    const user = await userService.createPaceUser(data);
 
     return { user };
-  }
-
-  /**
-   * Create Zlozka user
-   * @param {string}  firstName
-   * @param {string}  lastName
-   * @param {string}  email
-   * @param {string}  password
-   * @returnType {Promise}
-   */
-  public async createPaceUser(data: SignUpRequest): Promise<User> {
-    const { uid, email, name, jobTitle, companyName, photoUrl } = data;
-
-    const defaultUserProps: Partial<User> = {
-      createdAt: Date.now(),
-      emailVerified: false,
-      photoUrl: photoUrl ?? "",
-      jobTitle: jobTitle ?? "",
-      companyName: companyName ?? "",
-    };
-
-    const user = { email, name, ...defaultUserProps };
-    await db.collection(databaseCollections.USERS).doc(uid).set(user);
-
-    paceLoggingService.log(`${AuthService.name}.${this.createPaceUser.name} Creating pace user ${{ uid, ...user }}`);
-    return { ...user, uid } as User;
   }
 
   /**

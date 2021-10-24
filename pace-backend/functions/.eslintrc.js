@@ -13,7 +13,7 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: "./tsconfig.json",
+    project: "tsconfig.json",
     sourceType: "module",
   },
   plugins: ["@typescript-eslint", "import"],
@@ -59,6 +59,7 @@ module.exports = {
     "no-void": "error",
     "prefer-const": "warn",
   },
+  ignorePatterns: ["lib/**.js"],
   settings: {
     jsdoc: {
       tagNamePreference: {

@@ -12,7 +12,7 @@
   "engines": {
     "node": "14"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "dependencies": {
     "@firebase/auth": "^0.18.3",
     "await-to-js": "^3.0.0",

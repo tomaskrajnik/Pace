@@ -11,9 +11,9 @@
   },
   "compileOnSave": true,
   "include": [
-    "src/**/*.ts", ".eslintrc.js"
+   "src/**/*.ts", ".eslintrc.js"
   ],
   "exclude": [
-    "../node_modules/*", "node_modules/*", "dist"
+    "../node_modules/*", "node_modules/*", "dist/**"
   ]
 }

@@ -9,5 +9,5 @@ import { paceLoggingService } from "./services/logger";
  */
 export function sendResponse(res: any, status: HttpStatusCode, data: any) {
   paceLoggingService.info("Sending response", { status, data });
-  res.status(status).json(data);
+  res.status(status).json(data.error ? data : { data });
 }

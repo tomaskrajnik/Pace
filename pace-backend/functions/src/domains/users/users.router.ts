@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { validateFirebaseIdToken } from "../../shared/middleware/auth.middleware";
+import { validateFirebaseIdToken, validateUserHasAccess } from "../../shared/middleware/auth.middleware";
 import { validateRequest, ValidationRouteTypes } from "../../utils/validation";
-import { getCurrentUser, requestPasswordReset, signup } from "./users.controller";
+import { getCurrentUser, requestPasswordReset, signup, updateUser } from "./users.controller";
 
 const userRouter = Router();
 
@@ -60,10 +60,23 @@ userRouter.post(
 );
 
 /**
+ * Update user data
+ * @route POST /users/update/:id
+ * @returns {User.model}
+ */
+userRouter.post(
+  "/update/:id",
+  validateRequest(ValidationRouteTypes.UpdateUserInfo),
+  validateFirebaseIdToken,
+  validateUserHasAccess,
+  updateUser
+);
+
+/**
  * Delete user
  * @route DELETE /users/:id
  * @returns {void}
  */
-userRouter.delete;
+userRouter.delete("/users/:id", validateFirebaseIdToken, validateUserHasAccess);
 
 export { userRouter };

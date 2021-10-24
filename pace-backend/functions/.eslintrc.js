@@ -59,7 +59,7 @@ module.exports = {
     "no-void": "error",
     "prefer-const": "warn",
   },
-  ignorePatterns: ["lib/**.js"],
+  ignorePatterns: ["dist/**.js"],
   settings: {
     jsdoc: {
       tagNamePreference: {

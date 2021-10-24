@@ -12,11 +12,13 @@ class AuthService {
 
     /**
      *
-     * @param firstName
-     * @param lastName
-     * @param email
-     * @param password
-     * @returns
+     * @param {string} uid
+     * @param {string} name
+     * @param {string} email
+     * @param {string} photoUrl
+     * @param {string} companyName
+     * @param {string} jobTitle
+     * @returns {Object} user
      */
     public async signup(
         uid: string,

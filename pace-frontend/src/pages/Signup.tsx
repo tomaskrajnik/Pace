@@ -2,17 +2,24 @@ import React from 'react';
 import paceLogo from '../assets/pace-logo.svg';
 import Input from '../components/Auth/Input';
 import { useForm, Controller } from 'react-hook-form';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
+import AuthService from '../services/AuthService';
+import { useFirebaseAuth } from '../hooks/firebase/useFirebaseAuth';
 
 const Signup: React.FC = () => {
+    const fbAuth = useFirebaseAuth();
     // const thunkDispatch = useDispatch<AuthThunkDispatcher>();
     const { control, handleSubmit } = useForm({
-        defaultValues: { firstName: '', lastName: '', email: '', password: '' },
+        defaultValues: { name: '', email: '', password: '' },
     });
     // const [apiError, setApiError] = useState<string | null>(null);
     const handleSignup = async (data: any) => {
         try {
-            // await thunkDispatch(authThunks.signup(data));
-            await console.log(data);
+            const res = await createUserWithEmailAndPassword(fbAuth, data.email, data.password);
+            if (res.user) {
+                await AuthService.signup(res.user.uid, data.name, data.email);
+            }
         } catch (err: any) {
             console.log('errorL:', err);
         }
@@ -28,15 +35,15 @@ const Signup: React.FC = () => {
                     <div className="rounded-md shadow-sm -space-y-px">
                         <input type="hidden" name="remember" value="true" />
                         <Controller
-                            name="firstName"
+                            name="name"
                             control={control}
                             render={({ field: { onChange, value } }) => (
                                 <Input
                                     onChange={onChange}
                                     value={value}
                                     position="top"
-                                    id="firstName"
-                                    name="firstName"
+                                    id="name"
+                                    name="name"
                                     type="text"
                                     placeholder="Full Name"
                                 />

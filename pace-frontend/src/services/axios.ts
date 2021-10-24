@@ -15,13 +15,12 @@ export const axiosInstance = axios.create({
 
 /* eslint-disable no-param-reassign */
 axiosInstance.interceptors.request.use(async (axiosConfig) => {
-    const key = config.API_KEY;
     let idToken = null as string | null;
     // needs to be true if withCredentials is undefined
     if (axiosConfig.withCredentials !== false) {
         idToken = await getIdToken();
     }
-    axiosConfig.params = { ...axiosConfig.params, key };
+
     axiosConfig.headers = { ...axiosConfig.headers, Authorization: `Bearer ${idToken}` };
     return axiosConfig;
 });

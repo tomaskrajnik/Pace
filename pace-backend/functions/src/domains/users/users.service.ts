@@ -95,7 +95,7 @@ class UserService {
    * @return {Promise<admin.auth.UserRecord>}
    */
   public async findUserInFirestore(uid: string) {
-    paceLoggingService.log(`${UserService.name}.${this.findUserInFirestore} Getting firestore user:,`, { uid });
+    paceLoggingService.log(`${UserService.name}.${this.findUserInFirestore.name}, Getting firestore user:,`, { uid });
     const [err, doc] = await to(db.collection(databaseCollections.USERS).doc(uid).get());
     if (err) {
       paceLoggingService.error(JSON.stringify(err));

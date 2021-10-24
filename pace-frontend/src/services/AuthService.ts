@@ -44,4 +44,4 @@ class AuthService {
         }
     }
 }
-export default new AuthService(`${config.API_KEY}/users`, axiosInstance);
+export default new AuthService(`${config.API_URL}/users`, axiosInstance);

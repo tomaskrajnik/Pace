@@ -1,8 +1,7 @@
 import * as _ from "lodash";
-import { db, fbAdmin } from "../../shared/database/admin";
+import { fbAdmin } from "../../shared/database/admin";
 import { userService } from "../users/users.service";
-import { databaseCollections } from "../../shared/enums/database-collections.enum";
-import { User } from "../users/users.model";
+import { paceLoggingService } from "../../utils/services/logger";
 
 class AuthService {
   private static instance: AuthService;
@@ -26,6 +25,7 @@ class AuthService {
    * @returnType {Promise}
    */
   public async signup(data: SignUpRequest) {
+    paceLoggingService.log(`${AuthService.name}.${this.signup.name} Signing up user ${data}`);
     const { uid } = data;
     const firebaseUser = await userService.findUserInFirebase(uid);
     if (!firebaseUser) {
@@ -38,34 +38,35 @@ class AuthService {
       return { error: "User already registered" };
     }
 
-    const user = await this.createPaceUser(data);
+    const user = await userService.createPaceUser(data);
 
     return { user };
   }
 
   /**
-   * Create Zlozka user
-   * @param {string}  firstName
-   * @param {string}  lastName
-   * @param {string}  email
-   * @param {string}  password
-   * @returnType {Promise}
+   * Generate password reset link
+   * @param {string}  email Firebase user uid
+   * @returnType {Promise} Promise returnning link
    */
-  public async createPaceUser(data: SignUpRequest): Promise<User> {
-    const { uid, email, name, jobTitle, companyName, photoUrl } = data;
+  public async generatePasswordResetLink(email: string): Promise<string> {
+    paceLoggingService.log(`${AuthService.name}.${this.generatePasswordResetLink.name} Updating user ${email}`);
+    return fbAdmin.auth().generatePasswordResetLink(email);
+  }
 
-    const defaultUserProps: Partial<User> = {
-      createdAt: Date.now(),
-      emailVerified: false,
-      photoUrl: photoUrl ?? "",
-      jobTitle: jobTitle ?? "",
-      companyName: companyName ?? "",
-    };
+  /**
+   * Update firebase auth user data
+   * @param {any}  change Firebase user uid
+   * @param {any}  context Updated data
+   * @returnType {Promise} void
+   */
+  public async updateFirebaseAuthUser(change: any, context: any): Promise<void> {
+    const after = change.after.data();
+    paceLoggingService.log(
+      `${AuthService.name}.${this.updateFirebaseAuthUser.name} Updating firebase user ${after.change.id}`
+    );
 
-    const user = { email, name, ...defaultUserProps };
-    await db.collection(databaseCollections.USERS).doc(uid).set(user);
-
-    return { ...user, uid } as User;
+    const { photoUrl, name, email, phoneNumber } = after;
+    await fbAdmin.auth().updateUser(change.after.id, { photoURL: photoUrl, phoneNumber, displayName: name, email });
   }
 
   /**
@@ -74,8 +75,24 @@ class AuthService {
    * @param {object}  object additionalClaims
    * @returnType {Promise} Promise with custom token
    */
-  public async createCustomToken(id: string, object?: any) {
+  public async createCustomToken(id: string, object?: any): Promise<string> {
+    paceLoggingService.log(`${AuthService.name}.${this.createCustomToken.name} Creating custom token for a user ${id}`);
     return await fbAdmin.auth().createCustomToken(id, object);
+  }
+
+  /**
+   * Delete firebase auth user
+   * @param {any}  snapshot Firebase user uid
+   * @param {context}  context additionalClaims
+   * @returnType {Promise} Promise with custom token
+   */
+  public async deleteFirebaseAuthUser(snapshot: any, context: any): Promise<void> {
+    const uid = snapshot.id;
+    paceLoggingService.log(
+      `${AuthService.name}.${this.deleteFirebaseAuthUser.name} Deleting firebase auth user ${uid}`
+    );
+
+    await fbAdmin.auth().deleteUser(uid);
   }
 }
 

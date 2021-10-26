@@ -2,26 +2,29 @@
   "name": "functions",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
-    "build": "tsc -w",
+    "build:watch": "tsc -w",
+    "build": "tsc",
     "serve": "npm run build:watch && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "npm run build && firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {
     "node": "14"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "dependencies": {
     "@firebase/auth": "^0.18.3",
     "await-to-js": "^3.0.0",
     "bcrypt": "^5.0.1",
+    "eslint-plugin-prettier": "^4.0.0",
     "express-swagger-generator": "^1.1.17",
     "express-validator": "^6.13.0",
     "firebase-admin": "^9.2.0",
     "firebase-auth": "^0.1.2",
-    "firebase-functions": "^3.11.0"
+    "firebase-functions": "^3.11.0",
+    "prettier": "^2.4.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

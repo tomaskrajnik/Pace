@@ -29,7 +29,7 @@ export async function signup(req: any, res: any) {
     if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, response);
     return sendResponse(res, HttpStatusCode.CREATED, response);
   } catch (err) {
-    paceLoggingService.error("Error while signing up", err);
+    paceLoggingService.error("Error while signing up", { error: err });
     return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
   }
 }
@@ -42,14 +42,15 @@ export async function getCurrentUser(req: any, res: any) {
   const {
     user: { user_id: uid },
   } = req;
-
+  paceLoggingService.log("users/current", { uid });
   try {
     const user = await userService.findUserInFirestore(uid);
     if (!user)
       return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
         error: "Something went wrong while getting current user",
       });
-    return sendResponse(res, HttpStatusCode.CREATED, { ...user, uid });
+
+    return sendResponse(res, HttpStatusCode.CREATED, { user: { uid, ...user } });
   } catch (err) {}
 }
 
@@ -57,7 +58,7 @@ export async function getCurrentUser(req: any, res: any) {
  * @param  {any} req
  * @param  {any} res
  */
-export async function registered(req: any, res: any) {
+export async function isRegistered(req: any, res: any) {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
@@ -72,7 +73,7 @@ export async function registered(req: any, res: any) {
     const registered = user ? true : false;
     return sendResponse(res, HttpStatusCode.OK, { registered });
   } catch (err) {
-    paceLoggingService.error("Error - users/registered", err);
+    paceLoggingService.error("Error - users/registered", { error: err });
     return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
   }
 }
@@ -97,7 +98,56 @@ export async function updateUser(req: any, res: any) {
     const response = userService.updateUserData(uid, { ...data });
     sendResponse(res, HttpStatusCode.OK, response);
   } catch (err) {
-    paceLoggingService.error(`Error - users/update/${uid}`, err);
+    paceLoggingService.error(`Error - users/update/${uid}`, { error: err });
     return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
   }
+}
+
+/**
+ * @param  {any} req
+ * @param  {any} res
+ */
+export async function requestPasswordReset(req: any, res: any) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
+      errors: errors.array(),
+    });
+
+  const { email } = req.body;
+  paceLoggingService.log("users/request-password-reset", email);
+
+  try {
+    const user = await userService.findUserInFirebaseByEmail(email);
+    if (!user)
+      return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
+        errors: "User with this email is not registered",
+      });
+
+    const link = await authService.generatePasswordResetLink(email);
+    paceLoggingService.log(link);
+    //TODO send email to the user
+  } catch (err) {
+    paceLoggingService.error(`Error - users/request-password-reset/${email}`, { error: err });
+    return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
+  }
+}
+
+/**
+ * @param  {any} req
+ * @param  {any} res
+ */
+export async function deleteUser(req: any, res: any) {
+  const { id: uid } = req.params;
+
+  paceLoggingService.log("users/delete", uid);
+
+  if (!uid)
+    return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
+      errors: "No user id provided.",
+    });
+
+  const response = await userService.deleteUser(uid);
+  if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, response.error);
+  return sendResponse(res, HttpStatusCode.OK, response);
 }

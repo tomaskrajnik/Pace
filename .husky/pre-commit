@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd pace-backend/functions/ && npm run lint 
+cd pace-backend/functions/ && npm run lint && cd ../../pace-frontend/ && npm run lint

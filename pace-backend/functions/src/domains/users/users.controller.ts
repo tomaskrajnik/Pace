@@ -49,8 +49,8 @@ export async function getCurrentUser(req: any, res: any) {
       return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
         error: "Something went wrong while getting current user",
       });
-    Object.assign(user, uid);
-    return sendResponse(res, HttpStatusCode.CREATED, { user });
+
+    return sendResponse(res, HttpStatusCode.CREATED, { user: { uid, ...user } });
   } catch (err) {}
 }
 

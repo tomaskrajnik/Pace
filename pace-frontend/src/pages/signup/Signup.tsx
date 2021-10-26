@@ -1,27 +1,24 @@
 import React from 'react';
-import paceLogo from '../assets/pace-logo.svg';
-import Input from '../components/Auth/Input';
+import paceLogo from '../../assets/pace-logo.svg';
+import Input from '../../components/Auth/Input';
 import { useForm, Controller } from 'react-hook-form';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-
-import AuthService from '../services/AuthService';
-import { useFirebaseAuth } from '../hooks/firebase/useFirebaseAuth';
+import { AuthThunkDispatcher } from '../../store/auth/auth.types';
+import * as authThunks from '../../store/auth/auth.thunk';
+import { useDispatch } from 'react-redux';
+import { SignupData } from '../../services/AuthService.types';
 
 const Signup: React.FC = () => {
-    const fbAuth = useFirebaseAuth();
-    // const thunkDispatch = useDispatch<AuthThunkDispatcher>();
+    const thunkDispatch = useDispatch<AuthThunkDispatcher>();
+
     const { control, handleSubmit } = useForm({
         defaultValues: { name: '', email: '', password: '' },
     });
     // const [apiError, setApiError] = useState<string | null>(null);
-    const handleSignup = async (data: any) => {
+    const handleSignup = async (data: SignupData) => {
         try {
-            const res = await createUserWithEmailAndPassword(fbAuth, data.email, data.password);
-            if (res.user) {
-                await AuthService.signup(res.user.uid, data.name, data.email);
-            }
+            await thunkDispatch(authThunks.signup(data));
         } catch (err: any) {
-            console.log('errorL:', err);
+            console.log('error:', err);
         }
     };
     return (
@@ -94,12 +91,6 @@ const Signup: React.FC = () => {
                             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                 Remember me
                             </label>
-                        </div>
-
-                        <div className="text-sm">
-                            <a href="#" className="font-medium text-red-500 hover:text-red-600">
-                                Forgot your password?
-                            </a>
                         </div>
                     </div>
 

@@ -5,11 +5,11 @@ import 'tailwindcss/tailwind.css';
 import { useFirebase } from './hooks/firebase/useFirbase';
 
 const App: React.FC = () => {
-    // authenticate here and set to redux
     useFirebase();
+
     return (
         <BrowserRouter>
-            <Routes authenticated={false} />
+            <Routes />
         </BrowserRouter>
     );
 };

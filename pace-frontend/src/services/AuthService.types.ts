@@ -1,3 +1,5 @@
+import { User } from '../models/user.model';
+
 export interface APIError {
     error: string;
 }
@@ -15,9 +17,26 @@ export interface SignUpRequest {
     jobTitle?: string;
 }
 
+export interface SignupData {
+    password: string;
+    email: string;
+    name: string;
+    photoUrl?: string;
+    companyName?: string;
+    jobTitle?: string;
+}
 export interface SignUpSuccess {
-    //TODO add user model
-    user: any;
+    user: User;
 }
 
+export interface LoginData {
+    email: string;
+    password: string;
+}
+
+export interface GetCurrentUserSuccess {
+    user: User;
+}
+
+export type GetCurrentUserResponse = APISuccess<GetCurrentUserSuccess> & APIError;
 export type SignUpResponse = APISuccess<SignUpSuccess> & APIError;

@@ -2,8 +2,10 @@ import { applyMiddleware, combineReducers, createStore, Middleware } from 'redux
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
+import authReducer from './auth/auth.reducer';
 
 const rootReducer = combineReducers({
+    auth: authReducer,
 });
 
 const persistedState = loadState();
@@ -20,5 +22,3 @@ store.subscribe(
         saveState(store.getState());
     }, 100),
 );
-
-

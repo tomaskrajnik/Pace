@@ -40,7 +40,7 @@ const Input: React.FC<InputProps & InputHTMLAttributes<HTMLDivElement>> = ({
                     position === 'standalone' && 'rounded-md'
                 } ${position === 'bottom' && 'rounded-b-md'}  ${
                     position === 'top' && 'rounded-t-md'
-                } focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm ${className}`}
+                } focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ${className}`}
                 placeholder={placeholder}
             />
         </React.Fragment>

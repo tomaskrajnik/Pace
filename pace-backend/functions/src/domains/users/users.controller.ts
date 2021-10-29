@@ -5,6 +5,7 @@ import { sendResponse } from "../../utils/http";
 import { authService } from "../auth/auth.service";
 import { userService } from "./users.service";
 import { User } from "./users.model";
+import { mapRequestObjectToModel } from "../../utils/objects";
 
 /**
  * @param  {any} req
@@ -91,20 +92,15 @@ export async function updateUser(req: any, res: any) {
   paceLoggingService.log("users/update", req.body);
 
   const uid = req.user.uid;
-
-  const updateData: Partial<User> = {};
-  updateData.companyName = req.body.companyName ?? null;
-  updateData.jobTitle = req.body.jobTitle ?? null;
-  updateData.photoUrl = req.body.photoUrl ?? null;
-  updateData.phoneNumber = req.body.photoUrl ?? null;
-  updateData.projects = req.body.projects ?? null;
+  const updateData = mapRequestObjectToModel<Partial<User>>(User, req);
 
   try {
-    const response = userService.updateUserData(uid, { ...updateData });
+    const response = await userService.updateUserData(uid, updateData);
+    if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, response);
     sendResponse(res, HttpStatusCode.OK, response);
   } catch (err) {
-    paceLoggingService.error(`Error - users/update/${uid}`, { error: err });
-    return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
+    paceLoggingService.error(`Error - users/update/${uid}`, { error: err.message });
+    return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, { error: err.message });
   }
 }
 

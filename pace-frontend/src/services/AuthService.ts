@@ -1,7 +1,13 @@
 import { config } from '../config';
 import { axiosInstance } from './axios';
 import { AxiosInstance } from 'axios';
-import { GetCurrentUserResponse, SignUpRequest, SignUpResponse } from './AuthService.types';
+import {
+    GetCurrentUserResponse,
+    RequestPasswordResetRequest,
+    RequestPasswordResetResponse,
+    SignUpRequest,
+    SignUpResponse,
+} from './AuthService.types';
 import {
     getAuth,
     createUserWithEmailAndPassword,
@@ -101,6 +107,28 @@ class AuthService {
                 throw new Error('Something went terribly wrong');
             }
             return this.getUIDAndTokenFromCredentials(userCredentials);
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Request password reset
+     * @param {string} email
+     */
+    public async requestPasswordReset(email: string) {
+        const data: RequestPasswordResetRequest = { email };
+        try {
+            const response = await this.axios.post<RequestPasswordResetResponse>(
+                `${this.API}/request-password-reset`,
+                data,
+            );
+
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            return response.data.data;
         } catch (err: any) {
             throw new Error(err.message);
         }

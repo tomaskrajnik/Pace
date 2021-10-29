@@ -55,20 +55,19 @@ class UserService {
    */
   public async updateUserData(userId: string, data: Partial<User> = {}) {
     paceLoggingService.log(`${UserService.name}.${this.updateUserData.name} Updating user ${userId}`, { data });
-    const [err] = await to(
-      db
-        .collection(databaseCollections.USERS)
-        .doc(userId)
-        .update({ ...data })
-    );
+    if (!Object.keys(data).length) {
+      paceLoggingService.error(`Update user request must be type Partial of User`);
+      return { error: "Update user request must be type Partial of User" };
+    }
+    const [err] = await to(db.collection(databaseCollections.USERS).doc(userId).update(data));
 
     if (err) {
       paceLoggingService.error(`Error while updating firebase user with id: ${userId} -->`, err);
-      return { error: err };
+      return { error: err.message };
     }
 
     paceLoggingService.log(`${UserService.name}.${this.updateUserData.name} Finished update:`, { userId, ...data });
-    return { data: "Update successful" };
+    return { success: true };
   }
 
   /**

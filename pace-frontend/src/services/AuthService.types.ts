@@ -38,5 +38,13 @@ export interface GetCurrentUserSuccess {
     user: User;
 }
 
+export interface RequestPasswordResetRequest {
+    email: string;
+}
+export interface RequestPasswordResetSuccess {
+    success: boolean;
+}
+
 export type GetCurrentUserResponse = APISuccess<GetCurrentUserSuccess> & APIError;
 export type SignUpResponse = APISuccess<SignUpSuccess> & APIError;
+export type RequestPasswordResetResponse = APISuccess<RequestPasswordResetSuccess> & APIError;

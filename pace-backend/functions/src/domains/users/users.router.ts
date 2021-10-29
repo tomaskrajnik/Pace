@@ -51,6 +51,7 @@ userRouter.get("/current", validateFirebaseIdToken, getCurrentUser);
  * Generate and sends password reset link to the user
  * The rest is handled by Google auth
  * @route POST /users/password-reset-link
+ * @param {string} email
  * @returns {void}
  */
 userRouter.post(
@@ -62,7 +63,8 @@ userRouter.post(
 /**
  * Update user data
  * @route POST /users/update/:id
- * @returns {User.model}
+ * @param {Partial.User.model} updateData
+ * @returns {boolean} success
  */
 userRouter.put(
   "/update/:id",

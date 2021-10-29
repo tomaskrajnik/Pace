@@ -1,6 +1,7 @@
 import React from 'react';
 import paceLogo from '../../assets/pace-logo.svg';
-import Input from '../../components/Auth/Input';
+import Input from '../../components/auth/Input';
+
 import { useForm, Controller } from 'react-hook-form';
 import { AuthThunkDispatcher } from '../../store/auth/auth.types';
 import * as authThunks from '../../store/auth/auth.thunk';
@@ -86,7 +87,7 @@ const Signup: React.FC = () => {
                                 id="remember-me"
                                 name="remember-me"
                                 type="checkbox"
-                                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                                className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
                             />
                             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                 Remember me
@@ -98,14 +99,14 @@ const Signup: React.FC = () => {
                         <button
                             onClick={handleSubmit(handleSignup)}
                             type="submit"
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg
                                     className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20"
-                                    fill="#7F1D1D"
+                                    fill="#2563EB"
                                     aria-hidden="true"
                                 >
                                     <path

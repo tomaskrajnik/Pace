@@ -54,7 +54,7 @@ userRouter.get("/current", validateFirebaseIdToken, getCurrentUser);
  * @returns {void}
  */
 userRouter.post(
-  "/request-password-reset/",
+  "/request-password-reset",
   validateRequest(ValidationRouteTypes.RequestPasswordReset),
   requestPasswordReset
 );
@@ -64,7 +64,7 @@ userRouter.post(
  * @route POST /users/update/:id
  * @returns {User.model}
  */
-userRouter.post(
+userRouter.put(
   "/update/:id",
   validateRequest(ValidationRouteTypes.UpdateUserInfo),
   validateFirebaseIdToken,

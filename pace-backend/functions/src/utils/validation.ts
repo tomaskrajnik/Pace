@@ -28,10 +28,10 @@ export const validateRequest = (route: ValidationRouteTypes) => {
       ];
     }
     case ValidationRouteTypes.Registered: {
-      return body("email").isEmail().normalizeEmail();
+      return body("email").isEmail();
     }
     case ValidationRouteTypes.RequestPasswordReset: {
-      return body("email").isEmail().normalizeEmail();
+      return body("email").isEmail();
     }
     case ValidationRouteTypes.UpdateUserInfo: {
       return [

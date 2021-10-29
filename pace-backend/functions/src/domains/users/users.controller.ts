@@ -5,7 +5,6 @@ import { sendResponse } from "../../utils/http";
 import { authService } from "../auth/auth.service";
 import { userService } from "./users.service";
 import { User } from "./users.model";
-import { AtLeastOne } from "../../utils/types";
 
 /**
  * @param  {any} req
@@ -50,7 +49,7 @@ export async function getCurrentUser(req: any, res: any) {
         error: "Something went wrong while getting current user",
       });
 
-    return sendResponse(res, HttpStatusCode.CREATED, { user: { uid, ...user } });
+    return sendResponse(res, HttpStatusCode.OK, { user: { uid, ...user } });
   } catch (err) {}
 }
 
@@ -92,10 +91,16 @@ export async function updateUser(req: any, res: any) {
   paceLoggingService.log("users/update", req.body);
 
   const uid = req.user.uid;
-  const data: AtLeastOne<User> = req.body;
+
+  const updateData: Partial<User> = {};
+  updateData.companyName = req.body.companyName ?? null;
+  updateData.jobTitle = req.body.jobTitle ?? null;
+  updateData.photoUrl = req.body.photoUrl ?? null;
+  updateData.phoneNumber = req.body.photoUrl ?? null;
+  updateData.projects = req.body.projects ?? null;
 
   try {
-    const response = userService.updateUserData(uid, { ...data });
+    const response = userService.updateUserData(uid, { ...updateData });
     sendResponse(res, HttpStatusCode.OK, response);
   } catch (err) {
     paceLoggingService.error(`Error - users/update/${uid}`, { error: err });
@@ -127,6 +132,7 @@ export async function requestPasswordReset(req: any, res: any) {
     const link = await authService.generatePasswordResetLink(email);
     paceLoggingService.log(link);
     //TODO send email to the user
+    return sendResponse(res, HttpStatusCode.OK, { success: true });
   } catch (err) {
     paceLoggingService.error(`Error - users/request-password-reset/${email}`, { error: err });
     return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);

@@ -34,7 +34,7 @@ class AuthService {
 
     const isPaceUser = await userService.findUserInFirestore(uid);
     if (isPaceUser) {
-      // todo delete user from firebase Auth
+      // TODO delete user from firebase Auth
       return { error: "User already registered" };
     }
 
@@ -66,7 +66,7 @@ class AuthService {
     );
 
     const { photoUrl, name, email, phoneNumber } = after;
-    await fbAdmin.auth().updateUser(change.after.id, { photoURL: photoUrl, phoneNumber, displayName: name, email });
+    await fbAdmin.auth().updateUser(change.after.uid, { photoURL: photoUrl, phoneNumber, displayName: name, email });
   }
 
   /**

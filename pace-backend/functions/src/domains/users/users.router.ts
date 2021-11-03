@@ -6,7 +6,7 @@ import { deleteUser, getCurrentUser, requestPasswordReset, signup, updateUser } 
 const userRouter = Router();
 
 /**
- * @typedef User
+ * @typedef PaceUser
  * @property {string} uid
  * @property {string} name
  * @property {string} email
@@ -16,6 +16,7 @@ const userRouter = Router();
  * @property {number} createdAt
  * @property {string} companyName
  * @property {string} jobTitle
+ * @property {string[]} projects
  */
 
 /**
@@ -27,32 +28,38 @@ const userRouter = Router();
  */
 
 /**
- * @typedef SignUpResponse
- * @property {string} access_token
- * @property {object} user
+ * @typedef RequestPasswordResetResponse
+ * @property {boolean} success
  */
 
 /**
- * Sing up user
+ * @typedef UpdateUserResponse
+ * @property {boolean} success
+ */
+
+/**
+ * Sing up and create Pace user
  * @route POST /users/signup
- * @param {SignUpRequest.model}
- * @returns {SignupResponse.model}
+ * @group User - API for Pace users
+ * @param {SignUpRequest.model} req.body.required
+ * @returns {PaceUser.model} 200 Pace user model
  */
 userRouter.post("/signup", validateRequest(ValidationRouteTypes.Signup), signup);
 
 /**
  * Get current user
  * @route GET /users/current
- * @returns {User.model} user
+ * @group User - API for Pace users
+ * @returns {PaceUser.model} 200 Pace user model
  */
 userRouter.get("/current", validateFirebaseIdToken, getCurrentUser);
 
 /**
  * Generate and sends password reset link to the user
- * The rest is handled by Google auth
  * @route POST /users/password-reset-link
- * @param {string} email
- * @returns {void}
+ * @group User - API for Pace users
+ * @param {string} email.body.required
+ * @returns {RequestPasswordResetResponse.model} 200 success
  */
 userRouter.post(
   "/request-password-reset",
@@ -62,9 +69,11 @@ userRouter.post(
 
 /**
  * Update user data
- * @route POST /users/update/:id
- * @param {Partial.User.model} updateData
- * @returns {boolean} success
+ * @route PUT /users/update/:id
+ * @group User - API for Pace users
+ * @param {string} id.query.required Id of Pace user
+ * @param {PaceUser.model} updateData.body.required Partial user model
+ * @returns {UpdateUserResponse.model} 200 success
  */
 userRouter.put(
   "/update/:id",
@@ -77,7 +86,8 @@ userRouter.put(
 /**
  * Delete user
  * @route DELETE /users/:id
- * @returns {void}
+ * @param {string} id.query.required Id of Pace user
+ * @group User - API for Pace users
  */
 userRouter.delete("/users/:id", validateFirebaseIdToken, validateUserHasAccess, deleteUser);
 

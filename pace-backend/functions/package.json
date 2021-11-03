@@ -8,10 +8,12 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "npm run build && firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "api-docs:serve": "npm run start",
+    "postinstall": "patch-package"
   },
   "engines": {
-    "node": "14"
+    "node": "12"
   },
   "main": "dist/index.js",
   "dependencies": {
@@ -19,7 +21,8 @@
     "await-to-js": "^3.0.0",
     "bcrypt": "^5.0.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "express-swagger-generator": "^1.1.17",
+    "express-swagger-generator-types": "^1.1.17",
+    "express-swaggerize-ui": "^1.1.0",
     "express-validator": "^6.13.0",
     "firebase-admin": "^9.2.0",
     "firebase-auth": "^0.1.2",
@@ -33,7 +36,10 @@
     "eslint": "^7.6.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.22.0",
+    "express-swagger-generator": "^1.1.17",
     "firebase-functions-test": "^0.2.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "typescript": "^3.8.0"
   },
   "private": true

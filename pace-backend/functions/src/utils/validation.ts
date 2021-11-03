@@ -6,6 +6,7 @@ export const enum ValidationRouteTypes {
   Registered = "registered",
   UpdateUserInfo = "updateUser",
   RequestPasswordReset = "requestPasswordReset",
+  CreateProject = "createProject",
 }
 
 export const validateRequest = (route: ValidationRouteTypes) => {
@@ -13,7 +14,7 @@ export const validateRequest = (route: ValidationRouteTypes) => {
     case ValidationRouteTypes.Signup: {
       return [
         body("email").isEmail().normalizeEmail(),
-        body("name").isLength({ min: 2, max: 25 }).withMessage("Last name must be between 2 and 25 characters"),
+        body("name").isLength({ min: 2, max: 25 }).withMessage("Name must be between 2 and 25 characters"),
         body("uid").not().isEmpty().withMessage("Uid cannot be empty"),
         body("phoneNumber", "phoneNumber does not exists").optional().isString(),
         body("companyName", "companyName does not exists").optional().isNumeric(),
@@ -42,6 +43,11 @@ export const validateRequest = (route: ValidationRouteTypes) => {
         body("jobTitle", "jobTitle does not exists").optional().isNumeric(),
         body("emailVerified", "emailVerified does not exists").optional().isBoolean(),
         body("photoUrl", "photoUrl does not exists").optional().isString(),
+      ];
+    }
+    case ValidationRouteTypes.CreateProject: {
+      return [
+        body("name").isLength({ min: 2, max: 25 }).withMessage("Project name must be between 2 and 25 characters"),
       ];
     }
   }

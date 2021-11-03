@@ -2,7 +2,6 @@ import * as express from "express";
 import router from "./app.router";
 import * as cors from "cors";
 import { swaggerUrl } from "./shared/constants";
-const expressSwagger = require("express-swagger-generator");
 
 const app: express.Application = express();
 
@@ -15,6 +14,7 @@ app.use("/v1", router);
  * API docs using Swagger
  * this needs to be here
  */
+const expressSwagger = require("express-swagger-generator")(app);
 const options = {
   swaggerDefinition: {
     info: {
@@ -34,6 +34,6 @@ const options = {
   files: ["./domains/**/*.router.js"], // Path to the API handle folder
 };
 
-expressSwagger(app)(options);
+expressSwagger(options);
 
 export { app };

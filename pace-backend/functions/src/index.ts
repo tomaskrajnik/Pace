@@ -11,3 +11,4 @@ export const api = functions.region("europe-west1").https.onRequest(app);
  * Event handlers
  */
 export * from "./domains/users/users.event-handlers";
+export * from "./domains/projects/project.event-handlers";

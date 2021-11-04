@@ -3,3 +3,8 @@ export interface CreateProjectRequest {
   photoUrl: string;
   userId: string;
 }
+
+export interface UpdateProjectRequest {
+  name: string;
+  photoUrl: string;
+}

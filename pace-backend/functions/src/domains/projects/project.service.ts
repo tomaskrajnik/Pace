@@ -65,14 +65,14 @@ class ProjectService {
   public async deleteProject(projectId: string) {
     paceLoggingService.log(`Attempting to delete project ${projectId}`);
 
-    const [err, res] = await to(db.collection(databaseCollections.USERS).doc(projectId).delete());
+    const [err, res] = await to(db.collection(databaseCollections.PROJECTS).doc(projectId).delete());
 
     if (err) {
       paceLoggingService.error(`Error while deleting firebase user with id: ${projectId} -->`, err);
       return { error: err };
     }
 
-    paceLoggingService.log(`${ProjectService.name}.${this.deleteProject.name} Finished delete:`, { projectId });
+    paceLoggingService.log(`${ProjectService.name}.${this.deleteProject.name} Finished delete`, { projectId });
     return { res };
   }
 
@@ -82,7 +82,7 @@ class ProjectService {
    * @return {Promise<admin.auth.UserRecord>}
    */
   public async findProjectInFirestore(uid: string) {
-    paceLoggingService.log(`${ProjectService.name}.${this.findProjectInFirestore.name}, Getting firestore project:,`, {
+    paceLoggingService.log(`${ProjectService.name}.${this.findProjectInFirestore.name} Getting firestore project`, {
       uid,
     });
     const [err, doc] = await to(db.collection(databaseCollections.PROJECTS).doc(uid).get());
@@ -90,7 +90,50 @@ class ProjectService {
       paceLoggingService.error(JSON.stringify(err));
     }
     const project = doc?.data();
-    return project ? { uid, ...project } : null;
+    return project ? ({ uid, ...project } as Project) : null;
+  }
+
+  /**
+   * Return if user has permission to manipulate with object
+   * @param {string} userId
+   * @param {Project} project
+   * @returns {boolean} hasPermission
+   */
+  public async userHasPermissionToManipulateProject(userId: string, project: Project) {
+    paceLoggingService.log(
+      `${ProjectService.name}.${this.userHasPermissionToManipulateProject.name}, Checking user permission for project:,`,
+      {
+        data: { userId, project },
+      }
+    );
+    const user = (await userService.findUserInFirestore(userId)) as Partial<User>;
+    if (!user) return false;
+    return project.members.some((m) => m.uid === userId && m.role !== ProjectMemberRole.VIEWER);
+  }
+
+  /**
+   * Update the project
+   * @param projectId
+   * @param data
+   * @returns {boolean}
+   */
+  public async updateProject(projectId: string, data: Partial<Project> = {}) {
+    paceLoggingService.log(`${ProjectService.name}.${this.updateProject.name} Updating project ${projectId}`, data);
+    if (!Object.keys(data).length) {
+      paceLoggingService.error(`Update project request must be type Partial of Project`);
+      return { error: "Update project request must be type Partial of Project" };
+    }
+    const [err] = await to(db.collection(databaseCollections.PROJECTS).doc(projectId).update(data));
+
+    if (err) {
+      paceLoggingService.error(`Error while updating the project with id: ${projectId} -->`, err);
+      return { error: err.message };
+    }
+
+    paceLoggingService.log(`${ProjectService.name}.${this.updateProject.name} Finished update:`, {
+      updateData: { projectId, ...data },
+    });
+    return { success: true };
   }
 
   /**

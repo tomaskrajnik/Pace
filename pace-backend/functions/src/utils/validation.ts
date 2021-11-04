@@ -7,6 +7,7 @@ export const enum ValidationRouteTypes {
   UpdateUserInfo = "updateUser",
   RequestPasswordReset = "requestPasswordReset",
   CreateProject = "createProject",
+  UpdateProject = "updateProject",
 }
 
 export const validateRequest = (route: ValidationRouteTypes) => {
@@ -48,6 +49,12 @@ export const validateRequest = (route: ValidationRouteTypes) => {
     case ValidationRouteTypes.CreateProject: {
       return [
         body("name").isLength({ min: 2, max: 25 }).withMessage("Project name must be between 2 and 25 characters"),
+      ];
+    }
+    case ValidationRouteTypes.UpdateProject: {
+      return [
+        body("name", "name does not exists").optional().isString(),
+        body("photoUrl", "photoUrl does not exists").optional().isString(),
       ];
     }
   }

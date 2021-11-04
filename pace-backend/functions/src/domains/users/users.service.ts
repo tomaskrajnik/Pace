@@ -87,20 +87,29 @@ class UserService {
 
     // FInd all projects where the user is owner annd delete them
     const { projects } = userDoc;
-    projects.forEach(async (p) => {
-      const project = (await projectService.findProjectInFirestore(p)) as Project;
-      const ownnedProject = project.members.map((m) => m.uid === id && m.role === ProjectMemberRole.OWNER);
-      if (!ownnedProject) return;
-      await projectService.deleteProject(p);
-    });
-    const [err, res] = await to(db.collection(databaseCollections.USERS).doc(id).delete());
 
+    for (const p of projects) {
+      const project = (await projectService.findProjectInFirestore(p)) as Project;
+      // If the user is the only member
+      if (project.members.length === 1 && project.members[0].uid === id) {
+        await projectService.deleteProject(project.uid);
+        break;
+      }
+
+      // If the user is the owner of the project
+      const ownnedProject = project.members.map((m) => m.uid === id && m.role === ProjectMemberRole.OWNER);
+      if (!ownnedProject) break;
+
+      await projectService.deleteProject(p);
+    }
+
+    const [err, res] = await to(db.collection(databaseCollections.USERS).doc(id).delete());
     if (err) {
       paceLoggingService.error(`Error while deleting firebase user with id: ${id} -->`, err);
       return { error: err };
     }
 
-    paceLoggingService.log(`${UserService.name}.${this.updateUserData.name} Finished update:`, { userId: id });
+    paceLoggingService.log(`${UserService.name}.${this.updateUserData.name} Pace user deleted:`, { userId: id });
     return { res };
   }
 
@@ -140,12 +149,12 @@ class UserService {
   public async removeProjectFromUserAfterDelete(snapshot: any, context: any): Promise<void> {
     const projectId = snapshot.id;
     const data: Project = snapshot.data();
-    const userId = data.members[0].uid;
-    paceLoggingService.log(
-      `${UserService.name}.${this.addInitialProjectToUser.name}, Removing project to user trigger:,`,
-      { ids: { userId, projectId } }
-    );
-    await this.removeProjectFromUser(userId, projectId);
+    const promises: Promise<void>[] = [];
+    data.members.forEach((m) => {
+      promises.push(this.removeProjectFromUser(m.uid, projectId));
+    });
+
+    await Promise.all(promises);
   }
 
   /**
@@ -154,6 +163,7 @@ class UserService {
    * @param {string} projectId
    */
   public async removeProjectFromUser(userId: string, projectId: string) {
+    paceLoggingService.log("Attempting to delete project from the user model", { data: { userId, projectId } });
     const user = (await this.findUserInFirestore(userId)) as Omit<User, "uid">;
 
     const { projects } = user;

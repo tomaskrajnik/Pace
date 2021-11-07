@@ -3,8 +3,8 @@ import { to } from "await-to-js";
 import { databaseCollections } from "../../shared/enums/database-collections.enum";
 import { User } from "./users.model";
 import { paceLoggingService } from "../../utils/services/logger";
-import { Project, ProjectMemberRole } from "../projects/project.model";
-import { projectService } from "../projects/project.service";
+import { Project, ProjectMemberRole } from "../projects/projects.model";
+import { projectService } from "../projects/projects.service";
 
 class UserService {
   private static instance: UserService;
@@ -142,7 +142,7 @@ class UserService {
   }
 
   /**
-   * Automatically remove project to user model after deleting the original
+   * Automatically remove project from users model after deleting the original
    * @param {snapshot}
    * @param {context}
    */

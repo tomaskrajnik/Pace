@@ -8,13 +8,14 @@ export const enum ValidationRouteTypes {
   RequestPasswordReset = "requestPasswordReset",
   CreateProject = "createProject",
   UpdateProject = "updateProject",
+  InviteUser = "inviteUser",
 }
 
 export const validateRequest = (route: ValidationRouteTypes) => {
   switch (route) {
     case ValidationRouteTypes.Signup: {
       return [
-        body("email").isEmail().normalizeEmail(),
+        body("email").isEmail(),
         body("name").isLength({ min: 2, max: 25 }).withMessage("Name must be between 2 and 25 characters"),
         body("uid").not().isEmpty().withMessage("Uid cannot be empty"),
         body("phoneNumber", "phoneNumber does not exists").optional().isString(),
@@ -56,6 +57,9 @@ export const validateRequest = (route: ValidationRouteTypes) => {
         body("name", "name does not exists").optional().isString(),
         body("photoUrl", "photoUrl does not exists").optional().isString(),
       ];
+    }
+    case ValidationRouteTypes.InviteUser: {
+      return [body("email").isEmail(), body("role").isIn(["owner", "editor", "viewer"]).isString()];
     }
   }
 };

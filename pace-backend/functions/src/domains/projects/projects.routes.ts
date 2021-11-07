@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateFirebaseIdToken } from "../../shared/middleware/auth.middleware";
 import { validateRequest, ValidationRouteTypes } from "../../utils/validation";
-import { createProject, deleteProject, updateProject } from "./project.controller";
+import { createProject, deleteProject, inviteMember, leaveProject, updateProject } from "./projects.controller";
 
 const projectsRouter = Router();
 
@@ -36,6 +36,12 @@ const projectsRouter = Router();
  */
 
 /**
+ * @typedef CreateInvitationRequest
+ * @property {string} email
+ * @property {string} role enum "viewer" | "editor" | "owner"
+ */
+
+/**
  * Create new project
  * @route POST /projects/create
  * @group Projects - API for Pace projects manipulation
@@ -59,7 +65,7 @@ projectsRouter.delete("/delete/:id", validateFirebaseIdToken, deleteProject);
 
 /**
  * Update project
- * @route PUT /projects/delete/:id
+ * @route PUT /projects/update/:id
  * @group Projects - API for Pace projects manipulation
  * @param {UpdateProjectRequest.model} data.body.required Update project request
  * @param {string} id.query.required Id of the project
@@ -70,5 +76,27 @@ projectsRouter.put(
   validateRequest(ValidationRouteTypes.UpdateProject),
   updateProject
 );
+
+/**
+ * Invite user to project
+ * @route POST /projects/:id/invite-member
+ * @group Projects - API for Pace projects manipulation
+ * @param {string} id.query.required Id of the project
+ * @param {CreateInvitationRequest.model} invitation.body.reques
+ */
+projectsRouter.post(
+  "/:id/invite-member",
+  validateFirebaseIdToken,
+  validateRequest(ValidationRouteTypes.InviteUser),
+  inviteMember
+);
+
+/**
+ * Leave project
+ * @route POST /projects/:id/leave
+ * @group Projects - API for Pace projects manipulation
+ * @param {string} id.query.required Id of the project
+ */
+projectsRouter.get("/:id/leave", validateFirebaseIdToken, leaveProject);
 
 export { projectsRouter };

@@ -2,10 +2,11 @@ import to from "await-to-js";
 import { db } from "../../shared/database/admin";
 import { databaseCollections } from "../../shared/enums/database-collections.enum";
 import { paceLoggingService } from "../../utils/services/logger";
+import { Invivation } from "../invitations/invitations.model";
 import { User } from "../users/users.model";
 import { userService } from "../users/users.service";
-import { Project, ProjectMember, ProjectMemberRole } from "./project.model";
-import { CreateProjectRequest } from "./project.types";
+import { Project, ProjectMember, ProjectMemberRole } from "./projects.model";
+import { CreateProjectRequest } from "./projects.types";
 
 class ProjectService {
   private static instance: ProjectService;
@@ -45,6 +46,7 @@ class ProjectService {
     const defaultProjectProps: Partial<Project> = {
       createdAt: Date.now(),
       milestones: [],
+      invitations: [],
     };
 
     const project: Partial<Project> = { name, photoUrl, members: [initialMember], ...defaultProjectProps };
@@ -68,7 +70,9 @@ class ProjectService {
     const [err, res] = await to(db.collection(databaseCollections.PROJECTS).doc(projectId).delete());
 
     if (err) {
-      paceLoggingService.error(`Error while deleting firebase user with id: ${projectId} -->`, err);
+      paceLoggingService.error(`Error while deleting firebase project with id: ${projectId} -->`, {
+        error: err.message,
+      });
       return { error: err };
     }
 
@@ -137,19 +141,122 @@ class ProjectService {
   }
 
   /**
+   * Validate if user has permission to manipulate with project
+   * @param {string} userId
+   * @param {string} projectId
+   */
+  async getProjectAndValidatePermissions(userId: string, projectId: string) {
+    if (!projectId) {
+      paceLoggingService.error("Validate user has project permission - Project id not provided");
+      return { error: "Project id not provided" };
+    }
+
+    const project = await projectService.findProjectInFirestore(projectId);
+
+    if (!project) {
+      paceLoggingService.error("Validate user has project permission - project with the id does not exist", {
+        projectId,
+      });
+      return { error: "Project with provided id does not exist" };
+    }
+    const userHasPermission = await projectService.userHasPermissionToManipulateProject(userId, project);
+    if (!userHasPermission) {
+      paceLoggingService.error("Validate user has project permission - user does not have permission", {
+        data: { userId, project },
+      });
+      return {
+        error: "Unautorized",
+      };
+    }
+    return { project };
+  }
+  /**
+   * Update invitations in project after inviting project memer
+   * @param snapshot
+   * @param context
+   */
+  async updateInvitations(snapshot: any, context: any) {
+    const invitationId = snapshot.id;
+    const data: Omit<Invivation, "uid"> = snapshot.data();
+    const project = await this.findProjectInFirestore(data.projectId);
+    if (!project) {
+      return paceLoggingService.error("Project not found while updating invitations", { invitationId });
+    }
+    const invitations = [...project.invitations, invitationId];
+    return await this.updateProject(project.uid, { invitations });
+  }
+
+  /**
+   * Add user to project after accepting invitation
+   * @param {string} projectId
+   * @param {string} userId
+   * @param {string} role
+   * @param {string} invitationId
+   */
+  public async addInvitedMemberToProject(
+    projectId: string,
+    userId: string,
+    role: ProjectMemberRole,
+    invitationId: string
+  ) {
+    paceLoggingService.log("Adding new project member", { data: { projectId, userId, role, invitationId } });
+    const member = await this.generateProjectMember(userId, role);
+    const project = (await this.findProjectInFirestore(projectId)) as Project;
+    const invitations = project.invitations.filter((i) => i !== invitationId);
+    const members = [...project.members, member];
+
+    return await this.updateProject(projectId, { members, invitations });
+  }
+
+  /**
+   * Leave project
+   * @param {stting} userId
+   * @param {string} projectId
+   */
+  public async leaveProject(userId: string, projectId: string) {
+    paceLoggingService.log("User trying to leave project", { data: { projectId, userId } });
+    const project = (await this.findProjectInFirestore(projectId)) as Project;
+
+    if (!project) {
+      paceLoggingService.error("Error while leaving project - no corresponding project found");
+      return { error: "Project not found" };
+    }
+
+    const member = project.members.filter((p) => p.uid === userId)[0];
+    if (!member) {
+      paceLoggingService.error("Error while leaving project - no corresponding memer found");
+      return { error: "User is not a member of requested project" };
+    }
+
+    if (member.role === ProjectMemberRole.OWNER) {
+      // Delete project if the owner removes it
+      return await this.deleteProject(projectId);
+    }
+
+    const updatedMembers = project.members.filter((m) => m.uid !== userId);
+    await this.updateProject(projectId, { members: updatedMembers });
+
+    const user = (await userService.findUserInFirestore(userId)) as User;
+    const userProjects = user.projects.filter((p) => p !== projectId);
+    await userService.updateUserData(userId, { projects: userProjects });
+
+    paceLoggingService.log("User successfully removed from the project", { data: { projectId, userId } });
+    return { success: true };
+  }
+
+  /**
    * Returns ProjectMember object
    * @param {string} name
    * @param {string} photoUrl
    */
-  private async generateProjectMember(userId: string, role: ProjectMemberRole): Promise<ProjectMember | null> {
-    paceLoggingService.log(`${ProjectService.name}.${this.generateProjectMember.name} Generating project memer:`, {
+  private async generateProjectMember(userId: string, role: ProjectMemberRole): Promise<ProjectMember> {
+    paceLoggingService.log(`${ProjectService.name}.${this.generateProjectMember.name} Generating project member:`, {
       data: {
         userId,
         role,
       },
     });
     const user = (await userService.findUserInFirestore(userId)) as Partial<User>;
-    if (!user) return null;
 
     const projectMember: ProjectMember = {
       uid: userId,

@@ -20,6 +20,7 @@ export class Project {
   public createdAt: number;
   public milestones: string[];
   public members: ProjectMember[];
+  public invitations: string[];
   public photoUrl?: string;
 
   /**
@@ -32,6 +33,7 @@ export class Project {
     this.createdAt = projectConfig.createdAt;
     this.milestones = projectConfig.milestones;
     this.members = projectConfig.members;
+    this.invitations = projectConfig.invitations;
     this.photoUrl = projectConfig.photoUrl;
   }
 }

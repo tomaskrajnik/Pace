@@ -6,6 +6,7 @@ import { authService } from "../auth/auth.service";
 import { userService } from "./users.service";
 import { User } from "./users.model";
 import { mapRequestObjectToModel } from "../../utils/objects";
+import { emailService } from "../../shared/services/email-service";
 
 /**
  * @param  {any} req
@@ -122,13 +123,13 @@ export async function requestPasswordReset(req: any, res: any) {
     const user = await userService.findUserInFirebaseByEmail(email);
     if (!user)
       return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
-        errors: "User with this email is not registered",
+        error: "User with this email is not registered",
       });
 
     const link = await authService.generatePasswordResetLink(email);
-    paceLoggingService.log(link);
-    //TODO send email to the user
-    return sendResponse(res, HttpStatusCode.OK, { success: true });
+    const response = await emailService.sendPasswordResetLink(email, link);
+    if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, response);
+    sendResponse(res, HttpStatusCode.OK, response);
   } catch (err) {
     paceLoggingService.error(`Error - users/request-password-reset/${email}`, { error: err });
     return sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);

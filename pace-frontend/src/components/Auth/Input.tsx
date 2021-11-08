@@ -7,6 +7,7 @@ interface InputProps {
     position: InputPosition;
     onChange: (value: string) => void;
     value: string;
+    error?: boolean;
 }
 
 const Input: React.FC<InputProps & InputHTMLAttributes<HTMLDivElement>> = ({
@@ -20,6 +21,7 @@ const Input: React.FC<InputProps & InputHTMLAttributes<HTMLDivElement>> = ({
     position,
     value,
     onChange,
+    error,
 }) => {
     return (
         <React.Fragment>
@@ -36,11 +38,13 @@ const Input: React.FC<InputProps & InputHTMLAttributes<HTMLDivElement>> = ({
                 type={type}
                 autoComplete="email"
                 required={required}
-                className={`appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 ${
-                    position === 'standalone' && 'rounded-md'
-                } ${position === 'bottom' && 'rounded-b-md'}  ${
-                    position === 'top' && 'rounded-t-md'
-                } focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ${className}`}
+                className={`appearance-none rounded-none relative block w-full px-3 py-3 border ${
+                    error ? 'border-red-500' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 ${position === 'standalone' && 'rounded-md'} ${
+                    position === 'bottom' && 'rounded-b-md'
+                }  ${position === 'top' && 'rounded-t-md'} focus:outline-none focus:ring-blue-500 ${
+                    error ? 'focus:border-blue-500' : 'focus:border-blue-500'
+                }  focus:z-10 sm:text-sm ${className}`}
                 placeholder={placeholder}
             />
         </React.Fragment>

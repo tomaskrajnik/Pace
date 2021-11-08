@@ -88,10 +88,12 @@ class AuthService {
             if (!userCredentials) {
                 throw new Error('Something went terribly wrong');
             }
-
             return this.getUIDAndTokenFromCredentials(userCredentials);
         } catch (err: any) {
-            throw new Error(err.message);
+            if (err.message.includes('auth/email-already-in-use')) {
+                throw new Error('User already registered');
+            }
+            throw new Error('Something went wrong');
         }
     }
 
@@ -108,7 +110,13 @@ class AuthService {
             }
             return this.getUIDAndTokenFromCredentials(userCredentials);
         } catch (err: any) {
-            throw new Error(err.message);
+            if (err.message.includes('auth/wrong-password')) {
+                throw new Error('Wrong email or password');
+            }
+            if (err.message.includes('auth/user-not-found')) {
+                throw new Error('Wrong email or password');
+            }
+            throw new Error('Something went wrong');
         }
     }
 
@@ -122,6 +130,7 @@ class AuthService {
             const response = await this.axios.post<RequestPasswordResetResponse>(
                 `${this.API}/request-password-reset`,
                 data,
+                { withCredentials: false }, // important
             );
 
             if (response.data.error) {

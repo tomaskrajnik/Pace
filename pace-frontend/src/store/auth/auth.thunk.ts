@@ -20,7 +20,7 @@ export const signup = (data: SignupData): AuthThunkResult<Promise<void>> => {
             dispatch(authActions.signUpSuccess(user));
         } catch (err: any) {
             dispatch(authActions.signUpFailure(err));
-            console.log(err);
+            throw err;
         }
     };
 };
@@ -41,7 +41,7 @@ export const login = (data: LoginData): AuthThunkResult<Promise<void>> => {
             dispatch(authActions.loginSuccess(user));
         } catch (err: any) {
             dispatch(authActions.loginFailure(err));
-            console.log(err);
+            throw err;
         }
     };
 };

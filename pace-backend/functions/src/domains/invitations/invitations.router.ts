@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateFirebaseIdToken } from "../../shared/middleware/auth.middleware";
-import { acceptInvitation } from "./invitations.controller";
+import { acceptInvitation, declineInvitation } from "./invitations.controller";
 
 const invitationsRouter = Router();
 
@@ -18,6 +18,6 @@ invitationsRouter.get("/:id/accept", validateFirebaseIdToken, acceptInvitation);
  * @group Invitations - API for Pace invitations manipulations
  * @property {string} id.query.required id of the invitation
  */
-invitationsRouter.get("/:id/decline", validateFirebaseIdToken);
+invitationsRouter.get("/:id/decline", validateFirebaseIdToken, declineInvitation);
 
 export { invitationsRouter };

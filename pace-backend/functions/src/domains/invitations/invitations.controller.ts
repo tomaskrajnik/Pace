@@ -44,7 +44,7 @@ export async function declineInvitation(req: any, res: any) {
   paceLoggingService.log(`invitations/${id}/accept`);
 
   try {
-    const response = await invitationService.acceptInvitation(userId, id);
+    const response = await invitationService.declineInvitation(userId, id);
     if (response.error) {
       return sendResponse(res, HttpStatusCode.BAD_REQUEST, response.error);
     }

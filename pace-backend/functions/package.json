@@ -19,6 +19,7 @@
   "dependencies": {
     "@firebase/auth": "^0.18.3",
     "bcrypt": "^5.0.1",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "express-swagger-generator-types": "^1.1.17",
     "express-swaggerize-ui": "^1.1.0",

@@ -9,6 +9,7 @@ import Login from '../pages/login/Login';
 import { isLoggedInSelector } from '../store/auth/auth.selectors';
 import { connect } from 'react-redux';
 import { RootState } from '../store';
+import ResetPassword from '../pages/resetPassword/ResetPassword';
 
 const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated }) => {
     return (
@@ -16,6 +17,11 @@ const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated })
             <>
                 <NonAuthRoute authenticated={authenticated} path={NonAuthRoutes.Signup} component={Signup} />
                 <NonAuthRoute authenticated={authenticated} path={NonAuthRoutes.Login} component={Login} />
+                <NonAuthRoute
+                    authenticated={authenticated}
+                    path={NonAuthRoutes.ResetPassword}
+                    component={ResetPassword}
+                />
                 <AuthRoute authenticated={authenticated} path={AuthRoutes.Dashboard} component={Dashboard} />
             </>
         </Switch>

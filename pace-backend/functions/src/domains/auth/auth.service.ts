@@ -62,11 +62,17 @@ class AuthService {
   public async updateFirebaseAuthUser(change: any, context: any): Promise<void> {
     const after = change.after.data();
     paceLoggingService.log(
-      `${AuthService.name}.${this.updateFirebaseAuthUser.name} Updating firebase user ${after.change.id}`
+      `${AuthService.name}.${this.updateFirebaseAuthUser.name} Updating firebase user ${change.after.id}`
     );
-
     const { photoUrl, name, email, phoneNumber } = after;
-    await fbAdmin.auth().updateUser(change.after.uid, { photoURL: photoUrl, phoneNumber, displayName: name, email });
+    const dataToBeUpdated = {
+      ...(photoUrl ?? null),
+      ...(name ?? null),
+      ...(email ?? null),
+      ...(phoneNumber ?? null),
+    };
+    if (!Object.keys(dataToBeUpdated).length) return;
+    await fbAdmin.auth().updateUser(change.after.id, dataToBeUpdated);
   }
 
   /**

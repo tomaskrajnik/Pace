@@ -86,8 +86,8 @@ userRouter.put(
 /**
  * Delete user
  * @route DELETE /users/:id
- * @param {string} id.query.required Id of Pace user
  * @group User - API for Pace users
+ * @param {string} id.query.required Id of Pace user
  */
 userRouter.delete("/users/:id", validateFirebaseIdToken, validateUserHasAccess, deleteUser);
 

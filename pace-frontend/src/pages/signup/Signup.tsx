@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import paceLogo from '../../assets/svg/pace-logo.svg';
-import Input from '../../components/auth/Input';
+import Input from '../../components/form/Input';
 import Screen from '../../components/layout/Screen';
 import { useForm, Controller } from 'react-hook-form';
 import { AuthThunkDispatcher } from '../../store/auth/auth.types';
@@ -52,7 +52,7 @@ const Signup: React.FC = () => {
         }
     };
     return (
-        <Screen>
+        <Screen withoutopPadding>
             <div className="min-h-full flex justify-center py-10 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full">
                     <img className="mx-auto h-5 w-auto" src={paceLogo} alt="Pace Logo" />
@@ -125,7 +125,7 @@ const Signup: React.FC = () => {
                                         id="remember-me"
                                         name="remember-me"
                                         type="checkbox"
-                                        className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
+                                        className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-1"
                                     />
                                     <label htmlFor="remember-me">
                                         <NormalText>Remember me</NormalText>
@@ -141,7 +141,7 @@ const Signup: React.FC = () => {
                         </form>
 
                         <div className="mt-4 text-center flex justify-center">
-                            <NormalText>Already have an account? </NormalText>
+                            <NormalText className="mr-1">Already have an account? </NormalText>
                             <Link to={NonAuthRoutes.Login}>
                                 <NormalText className="text-blue-500 hover:text-blue-600">Log in</NormalText>
                             </Link>

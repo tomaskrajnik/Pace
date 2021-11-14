@@ -21,6 +21,7 @@
         "noUnusedParameters": true,
         "incremental": true,
         "noFallthroughCasesInSwitch": true,
+        
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "build"],

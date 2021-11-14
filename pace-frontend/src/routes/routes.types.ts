@@ -1,5 +1,6 @@
 export enum AuthRoutes {
     Dashboard = '/dashboard',
+    UserSettings = '/user',
 }
 
 export enum NonAuthRoutes {

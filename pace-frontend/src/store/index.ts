@@ -4,9 +4,11 @@ import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
 import authReducer from './auth/auth.reducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import projectsReducer from './projects/projects.reducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
+    projects: projectsReducer,
 });
 
 const persistedState = loadState();

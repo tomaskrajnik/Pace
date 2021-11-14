@@ -263,6 +263,7 @@ class ProjectService {
       name: user.name ?? "",
       role,
       photoUrl: user.photoUrl ?? "",
+      avatarColor: user.avatarColor ?? "",
     };
     return projectMember;
   }

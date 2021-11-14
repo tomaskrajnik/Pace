@@ -15,6 +15,7 @@ module.exports = {
     rules: {
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/no-var-requires': 'off',
+        'react/no-unescaped-entities': 'off',
     },
     settings: {
         react: {

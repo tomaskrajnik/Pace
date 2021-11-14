@@ -1,26 +1,19 @@
 import React from 'react';
-import { AuthThunkDispatcher } from '../../store/auth/auth.types';
-import { connect, useDispatch } from 'react-redux';
-import * as authThunks from '../../store/auth/auth.thunk';
-import { RootState } from '../../store';
+import { useSelector } from 'react-redux';
+import NormalHeader from '../../components/common/NormalHeader';
+import Screen from '../../components/layout/Screen';
+import { userSelector } from '../../store/auth/auth.selectors';
 
-const Dashboard: React.FC<ReturnType<typeof mapStateToProps>> = ({ user }) => {
-    const thunkDispatch = useDispatch<AuthThunkDispatcher>();
-    const handleLogOut = async () => {
-        await thunkDispatch(authThunks.logout());
-    };
-
+const Dashboard: React.FC = ({}) => {
+    const user = useSelector(userSelector);
+    if (!user) return null;
     return (
-        <div>
-            <h1>Dashboard</h1>
-            <button onClick={handleLogOut}>Log out</button>
-            <h2>{`Hello ${user.name}`}</h2>
-        </div>
+        <Screen>
+            <div>
+                <NormalHeader>{`Welcome, ${user.name.split(' ')[0]} 👋!`}</NormalHeader>
+            </div>
+        </Screen>
     );
 };
 
-const mapStateToProps = (state: RootState) => ({
-    user: state.auth.user,
-});
-
-export default connect(mapStateToProps)(Dashboard);
+export default Dashboard;

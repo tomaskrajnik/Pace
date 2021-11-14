@@ -9,6 +9,7 @@ export interface ProjectMember {
   name: string;
   role: ProjectMemberRole;
   photoUrl?: string;
+  avatarColor: string;
 }
 
 /**

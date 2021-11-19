@@ -82,7 +82,7 @@ projectsRouter.put(
  * @route POST /projects/:id/invite-member
  * @group Projects - API for Pace projects manipulation
  * @param {string} id.query.required Id of the project
- * @param {CreateInvitationRequest.model} invitation.body.reques
+ * @param {CreateInvitationRequest.model} invitation.body.request
  */
 projectsRouter.post(
   "/:id/invite-member",

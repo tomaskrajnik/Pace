@@ -1,7 +1,7 @@
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { useState } from 'react';
 
-export type FirebaseStorageFolders = 'users';
+export type FirebaseStorageFolders = 'users' | 'projects';
 
 export const useFirebaseStorage = (storageFolder: FirebaseStorageFolders, fileName: string) => {
     const [uploading, setUploading] = useState(false);

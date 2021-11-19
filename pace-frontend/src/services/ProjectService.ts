@@ -1,8 +1,7 @@
 import { config } from '../config';
 import { axiosInstance } from './axios';
 import { AxiosInstance } from 'axios';
-
-import { Firestore, getFirestore, onSnapshot } from '@firebase/firestore';
+import { documentId, Firestore, getFirestore, onSnapshot } from '@firebase/firestore';
 import { collection, query, where } from 'firebase/firestore';
 import { databaseCollections } from '../utils/database-collections';
 import { Unsubscribe } from '@firebase/util';
@@ -10,7 +9,13 @@ import { FirebaseHelper } from './firebase/FirebaseHelper';
 import { Project } from '../models/projects.model';
 import { store } from '../store';
 import { setProjects, setProjectsLoading } from '../store/projects/projects.actions';
-import { CreateProjectRequest, CreateProjectResponse } from './ProjectService.types';
+import {
+    CreateProjectRequest,
+    CreateProjectResponse,
+    InviteProjectMemberRequest,
+    InviteProjectMemberResponse,
+    LeaveProjectResponse,
+} from './ProjectService.types';
 
 class ProjectService {
     /**
@@ -41,9 +46,9 @@ class ProjectService {
 
         const { projects } = user;
         if (!projects.length) return;
-        const q = query(collection(this.db, databaseCollections.PROJECTS), where('uid', 'in', projects));
-        store.dispatch(setProjectsLoading(true));
+        const q = query(collection(this.db, databaseCollections.PROJECTS), where(documentId(), 'in', projects));
         const unsub = onSnapshot(q, (querySnapshot) => {
+            store.dispatch(setProjectsLoading(true));
             console.log('Listening to project changes');
 
             // Snap docs to project model
@@ -53,20 +58,61 @@ class ProjectService {
             store.dispatch(setProjects(projects));
 
             // Setting loading to false
-            store.dispatch(setProjectsLoading(true));
+            store.dispatch(setProjectsLoading(false));
         });
         this.projectsUnsub = unsub;
     }
 
     /**
-     * Create project
-     * @param {string} name
+     * Invite project member
+     * @param {CreateProjectRequest} data
      * @returns
      */
-    public async createProject(name: string) {
-        const data: CreateProjectRequest = { name };
+    public async createProject(data: CreateProjectRequest) {
         try {
             const response = await this.axios.post<CreateProjectResponse>(`${this.API}/create`, data);
+
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            return response.data.data;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Invite member to a project
+     * @param projectId
+     * @param data
+     * @returns
+     */
+    public async inviteMember(projectId: string, data: InviteProjectMemberRequest) {
+        try {
+            const response = await this.axios.post<InviteProjectMemberResponse>(
+                `${this.API}/${projectId}/invite-member`,
+                data,
+            );
+
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            return response.data.data;
+        } catch (err: any) {
+            throw new Error('User already invited');
+        }
+    }
+
+    /**
+     * Leave project
+     * @param {string} id
+     * @returns
+     */
+    public async leaveProject(id: string) {
+        try {
+            const response = await this.axios.get<LeaveProjectResponse>(`${this.API}/${id}/leave`);
 
             if (response.data.error) {
                 throw new Error(response.data.error);

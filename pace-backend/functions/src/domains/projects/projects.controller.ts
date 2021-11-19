@@ -106,7 +106,7 @@ export async function inviteMember(req: any, res: any) {
 
   const { id } = req.params;
   const { user_id: userId } = req.user;
-  const { email, role: invitedUserRole } = req.body;
+  const { email, role: invitedUserRole, projectName, invitedBy } = req.body;
 
   paceLoggingService.log(`projects/${id}/invite-member`, { data: req.body });
 
@@ -119,9 +119,15 @@ export async function inviteMember(req: any, res: any) {
       });
     }
     const { project } = response;
-    const invitationRes = await invitationService.createInvitation(project!.uid, email, invitedUserRole);
+    const invitationRes = await invitationService.createInvitation(
+      project!.uid,
+      email,
+      invitedUserRole,
+      projectName,
+      invitedBy
+    );
 
-    if (invitationRes.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, res);
+    if (invitationRes.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, invitationRes);
     sendResponse(res, HttpStatusCode.CREATED, { success: true });
   } catch (err) {
     paceLoggingService.error("Error while creating the invitation", { error: err });

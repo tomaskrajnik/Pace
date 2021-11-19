@@ -11,6 +11,7 @@ class FirebaseHelper {
    * @return {any}
    */
   docsToObjects(docs: any, key_name = "uid"): any {
+    if (!docs) return null;
     return docs.map((e: any) => {
       const docData = e.data();
       docData[key_name] = e.id;

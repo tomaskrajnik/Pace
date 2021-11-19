@@ -56,6 +56,8 @@ export const validateRequest = (route: ValidationRouteTypes) => {
       return [
         body("name", "name does not exists").optional().isString(),
         body("photoUrl", "photoUrl does not exists").optional().isString(),
+        body("projectName", "projectName does not exists").optional().isString(),
+        body("invitedBy", "invitedBy does not exists").optional().isString(),
       ];
     }
     case ValidationRouteTypes.InviteUser: {

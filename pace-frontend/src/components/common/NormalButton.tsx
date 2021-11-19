@@ -8,7 +8,7 @@ interface NormalButtonProps {
     onClick: () => void;
     className?: string;
     type?: 'submit' | 'button';
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'tertiary';
     size?: 'small' | 'normal' | 'large';
     disabled?: boolean;
     pill?: boolean;
@@ -18,6 +18,7 @@ interface NormalButtonProps {
         position: 'left' | 'right';
     };
     loading?: boolean;
+    ref?: React.Ref<HTMLButtonElement>;
 }
 
 const classes = {
@@ -43,13 +44,16 @@ const NormalButton: React.FC<NormalButtonProps> = ({
     color = 'blue',
     icon,
     loading,
+    ref,
     ...props
 }) => {
     // Tinting the colors for secondary variant
     const colorClasses =
         variant === 'primary'
             ? `text-white bg-${color}-500 hover:bg-${color}-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${color}-500`
-            : `text-sm text-${color}-500 font-medium rounded-md text-white bg-${color}-100 hover:bg-${color}-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${color}-300`;
+            : `text-sm text-${color}-500 font-medium rounded-md text-white bg-${
+                  variant === 'secondary' ? color : 'white '
+              }-100 hover:bg-${color}-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${color}-300`;
     const loader = require(`../../assets/lottie/default-loader-${variant == 'primary' ? 'white' : color}.json`);
 
     const defaultOptions = {
@@ -59,6 +63,7 @@ const NormalButton: React.FC<NormalButtonProps> = ({
     };
     return (
         <button
+            ref={ref}
             onClick={onClick}
             className={prettyClasses(`
         ${classes.base}

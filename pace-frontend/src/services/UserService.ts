@@ -11,6 +11,7 @@ import { User } from '../models/user.model';
 import { setUpdateUser } from '../store/auth/auth.actions';
 import { UpdateUserDataResponse } from './UserService.types';
 import ProjectService from './ProjectService';
+import InvitationService from './InvitationService';
 
 class UserSerice {
     /**
@@ -51,6 +52,7 @@ class UserSerice {
             }
 
             ProjectService.listenToProjects();
+            InvitationService.listenToInvitations();
         });
         this.userUnsub = unsub;
     }

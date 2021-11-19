@@ -4,4 +4,5 @@ export const setTokensToStorage = (idToken: string) => {
 
 export const clearStorage = () => {
     localStorage.removeItem('FIREBASE_ID_TOKEN');
+    localStorage.removeItem('pace_state');
 };

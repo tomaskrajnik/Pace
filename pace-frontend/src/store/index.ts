@@ -5,15 +5,17 @@ import throttle from 'lodash/throttle';
 import authReducer from './auth/auth.reducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import projectsReducer from './projects/projects.reducer';
+import invitationsReducer from './invitations/invitations.reducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
     projects: projectsReducer,
+    invitations: invitationsReducer,
 });
 
 const persistedState = loadState();
 
-export type RootState = any;
+export type RootState = ReturnType<typeof rootReducer>;
 
 const middleware: Middleware[] = [thunk as ThunkMiddleware<RootState>];
 export const store = createStore(rootReducer, persistedState, composeWithDevTools(applyMiddleware(...middleware)));

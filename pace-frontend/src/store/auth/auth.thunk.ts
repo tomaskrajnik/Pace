@@ -6,6 +6,12 @@ import { clearStorage, setTokensToStorage } from '../../utils/localStorage';
 import { getAuth, signOut } from 'firebase/auth';
 import ProjectService from '../../services/ProjectService';
 import UserService from '../../services/UserService';
+import InvitationService from '../../services/InvitationService';
+import { ProjectsActionTypes } from '../projects/projects.types';
+import { clearProjects } from '../projects/projects.actions';
+import { Dispatch } from 'react';
+import { InvitationsActionTypes } from '../invitations/invitations.types';
+import { clearInvitations } from '../invitations/invitations.actions';
 
 export const signup = (data: SignupData): AuthThunkResult<Promise<void>> => {
     return async (dispatch: AuthThunkDispatcher) => {
@@ -59,8 +65,12 @@ export const logout = (): AuthThunkResult<Promise<void>> => {
         const fbAuth = getAuth();
         dispatch(authActions.logout());
 
+        (dispatch as Dispatch<ProjectsActionTypes>)(clearProjects());
+        (dispatch as Dispatch<InvitationsActionTypes>)(clearInvitations());
+
         ProjectService.unsubscribeFromProjects();
         UserService.unsubscribeFromUser();
+        InvitationService.unsubscribeFromInvitations();
 
         await signOut(fbAuth);
         clearStorage();

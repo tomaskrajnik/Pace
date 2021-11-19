@@ -2,7 +2,7 @@ import { RootState } from '.';
 
 export const loadState = () => {
     try {
-        const serializedState: string | null = localStorage.getItem('state');
+        const serializedState: string | null = localStorage.getItem('pace_state');
         if (serializedState === null) {
             return undefined;
         }
@@ -15,7 +15,7 @@ export const loadState = () => {
 export const saveState = (state: RootState) => {
     try {
         const serializedState = JSON.stringify(state);
-        localStorage.setItem('state', serializedState);
+        localStorage.setItem('pace_state', serializedState);
     } catch (err) {
         console.log('Error while saving state to local storage', err);
     }

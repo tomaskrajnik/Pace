@@ -1,6 +1,8 @@
 import to from "await-to-js";
+import { firestore } from "firebase-admin";
 import { db } from "../../shared/database/admin";
 import { databaseCollections } from "../../shared/enums/database-collections.enum";
+import { firebaseHelper } from "../../shared/services/firebase-helper.service";
 import { paceLoggingService } from "../../utils/services/logger";
 import { Invivation } from "../invitations/invitations.model";
 import { User } from "../users/users.model";
@@ -182,7 +184,15 @@ class ProjectService {
     if (!project) {
       return paceLoggingService.error("Project not found while updating invitations", { invitationId });
     }
-    const invitations = [...project.invitations, invitationId];
+    let invitations: string[] = [];
+    if (project.invitations.includes(invitationId)) {
+      paceLoggingService.log("Removing invitaion from project", { project: project.uid, invitationId });
+      invitations = project.invitations.filter((i) => i !== invitationId);
+    } else {
+      paceLoggingService.log("Adding invitaion to project", { project: project.uid, invitationId });
+      invitations = [...project.invitations, invitationId];
+    }
+
     return await this.updateProject(project.uid, { invitations });
   }
 
@@ -206,6 +216,40 @@ class ProjectService {
     const members = [...project.members, member];
 
     return await this.updateProject(projectId, { members, invitations });
+  }
+
+  /**
+   * Update project member after user update
+   * @param {any}  change  User uid
+   * @param {any}  context Updated data
+   * @returnType {Promise} void
+   */
+  public async updateProjectMemberDataOnuserUpdate(change: any, context: any): Promise<void> {
+    const after = change.after.data();
+    const { photoUrl, name } = after;
+
+    const userId = change.after.id;
+
+    const dataToBeUpdated: Partial<ProjectMember> = {};
+
+    if (photoUrl) dataToBeUpdated.photoUrl = photoUrl;
+    if (name) dataToBeUpdated.name = name;
+
+    if (!Object.keys(dataToBeUpdated).length) return;
+
+    paceLoggingService.log("Attempting to update project members in user projects", {
+      data: { userId, dataToBeUpdated },
+    });
+
+    const projects = await this.getProjectsForUser(userId);
+    if (!projects) return paceLoggingService.log("No projects found. Stopping update");
+
+    projects.forEach(async (p) => {
+      const newMembers = [...p.members];
+      const idx = newMembers.findIndex((pm) => pm.uid === userId);
+      newMembers[idx] = { ...newMembers[idx], ...dataToBeUpdated };
+      await this.updateProject(p.uid, { members: newMembers });
+    });
   }
 
   /**
@@ -242,6 +286,26 @@ class ProjectService {
 
     paceLoggingService.log("User successfully removed from the project", { data: { projectId, userId } });
     return { success: true };
+  }
+
+  /**
+   * Get all projects for user
+   * @param userId
+   * @returns
+   */
+  public async getProjectsForUser(userId: string): Promise<Project[] | null> {
+    paceLoggingService.log(`${ProjectService.name}.${this.getProjectsForUser.name} Getting projects for user`, {
+      userId,
+    });
+    const user = (await userService.findUserInFirestore(userId)) as User;
+    const docs = await db
+      .collection(databaseCollections.PROJECTS)
+      .where(firestore.FieldPath.documentId(), "in", user.projects)
+      .get();
+    paceLoggingService.log("Docs", { docs });
+    const projects = firebaseHelper.docsToObjects(docs);
+
+    return projects ? projects : null;
   }
 
   /**

@@ -1,7 +1,6 @@
-import { createSelector } from 'reselect';
-import { User } from '../../models/user.model';
 import { RootState } from '../index';
+import { createSelector } from 'reselect';
 
-export const userSelector = (state: RootState): User | null => state.auth.user ?? null;
+export const userSelector = (state: RootState) => state.auth.user;
 
 export const isLoggedInSelector = createSelector(userSelector, (user) => !!user);

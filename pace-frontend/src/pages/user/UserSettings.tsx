@@ -14,6 +14,7 @@ import Screen from '../../components/layout/Screen';
 import ProfilePicture from '../../components/common/ProfilePicture';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { useFirebaseStorage } from '../../hooks/firebase/useFirebaseStorage';
+import { toast } from 'react-toastify';
 
 interface IFormInputs {
     name: string;
@@ -68,8 +69,9 @@ const UserSettings: React.FC = ({}) => {
         try {
             setLoading(true);
             await UserService.updateUser(user.uid, data);
+            toast.success('Update successfull');
         } catch (err) {
-            console.log(err);
+            toast.error('Something went wrong');
         } finally {
             setLoading(false);
         }
@@ -77,7 +79,7 @@ const UserSettings: React.FC = ({}) => {
 
     return (
         <Screen backgroundColorClass="md:bg-gray-100">
-            <div className="xs:px-2 ">
+            <div className="xs:px-2 md:py-10 sm:py-8">
                 <div className="md:grid md:grid-cols-3 md:gap-6">
                     <div className="md:col-span-1">
                         <div className="md:px-4 sm:px-0">
@@ -111,7 +113,7 @@ const UserSettings: React.FC = ({}) => {
                                                         <NormalButton
                                                             title="Change photo"
                                                             onClick={onImageUpload}
-                                                            variant="secondary"
+                                                            variant="tertiary"
                                                             color="blue"
                                                             loading={uploading}
                                                             className=" shadow ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

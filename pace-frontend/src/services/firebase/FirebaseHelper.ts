@@ -10,7 +10,7 @@ export class FirebaseHelper {
         if (snapshot?.docs) {
             return snapshot.docs.map((documentSnapshot) => {
                 const data = documentSnapshot.data();
-                data.id = documentSnapshot.id;
+                data.uid = documentSnapshot.id;
                 return new Model(data);
             });
         }

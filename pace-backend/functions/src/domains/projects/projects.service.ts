@@ -298,12 +298,12 @@ class ProjectService {
       userId,
     });
     const user = (await userService.findUserInFirestore(userId)) as User;
-    const docs = await db
+    const snapshot = await db
       .collection(databaseCollections.PROJECTS)
       .where(firestore.FieldPath.documentId(), "in", user.projects)
       .get();
-    paceLoggingService.log("Docs", { docs });
-    const projects = firebaseHelper.docsToObjects(docs);
+    paceLoggingService.log("Docs", { snapshot });
+    const projects = firebaseHelper.docsToObjects(snapshot.docs);
 
     return projects ? projects : null;
   }

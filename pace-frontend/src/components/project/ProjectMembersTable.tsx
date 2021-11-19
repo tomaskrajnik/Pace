@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { Project, ProjectMemberRole } from '../../models/projects.model';
+import { Menu, Transition } from '@headlessui/react';
+import React, { Fragment, useState } from 'react';
+import { toast } from 'react-toastify';
+import { Project, ProjectMember, ProjectMemberRole } from '../../models/projects.model';
 import { User } from '../../models/user.model';
+import ProjectService from '../../services/ProjectService';
+import { classNames } from '../../utils/formatting';
 import NormalButton from '../common/NormalButton';
 import NormalText from '../common/NormalText';
 import ProfilePicture from '../common/ProfilePicture';
+import { WarningPopUp } from '../layout/WarningPopUp';
 import { InviteMemberModal } from './InviteMemberModal';
 import { ProjectBadge } from './ProjectBadge';
 
@@ -15,6 +20,21 @@ interface ProjectMembersRoleTableProps {
 
 export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ project, userRole, user }) => {
     const [inviteModalOpen, setInviteModalOpen] = useState(false);
+    const [memberToDelete, setMembertoDelete] = useState<ProjectMember | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleRemoveMember = async () => {
+        if (!memberToDelete) return;
+        try {
+            setLoading(true);
+            await ProjectService.removeMemberFromProject(memberToDelete.uid, project.uid);
+            toast.success('User removed from the project');
+        } catch (err) {
+            toast.error('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (!project || !userRole) return null;
     return (
@@ -32,11 +52,10 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                         </div>
                     )}
                 </div>
-
                 <div className="flex flex-col">
-                    <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="-my-2 sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                            <div className="shadow-md overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                            <div className="shadow-md  border-b border-gray-200 sm:rounded-lg">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-white">
                                         <tr>
@@ -82,12 +101,41 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                                                     <ProjectBadge role={m.role} />
                                                 </td>
 
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    {userRole !== ProjectMemberRole.VIEWER && (
-                                                        <a href="#" className="text-blue-500 hover:text-indigo-900">
-                                                            Edit
-                                                        </a>
-                                                    )}
+                                                <td className="px-6 py-4 whitespace-nowrap relative text-right text-sm font-medium">
+                                                    <Menu as="div">
+                                                        {userRole === ProjectMemberRole.OWNER && m.uid !== user.uid && (
+                                                            <Menu.Button className="text-blue-500 hover:text-indigo-900">
+                                                                Edit
+                                                            </Menu.Button>
+                                                        )}
+                                                        <Transition
+                                                            as={Fragment}
+                                                            enter="transition ease-out duration-100"
+                                                            enterFrom="transform opacity-0 scale-95"
+                                                            enterTo="transform opacity-100 scale-100"
+                                                            leave="transition ease-in duration-75"
+                                                            leaveFrom="transform opacity-100 scale-100"
+                                                            leaveTo="transform opacity-0 scale-95"
+                                                        >
+                                                            <Menu.Items className="origin-top-right absolute right-5  -mt-10 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                                <Menu.Item>
+                                                                    {({ active }) => (
+                                                                        <button
+                                                                            onClick={() => setMembertoDelete(m)}
+                                                                            className={classNames(
+                                                                                active
+                                                                                    ? 'bg-red-100 text-red-600 '
+                                                                                    : '',
+                                                                                'block w-full text-left px-4 py-2 text-sm text-red-600 w-100',
+                                                                            )}
+                                                                        >
+                                                                            Delete user
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                            </Menu.Items>
+                                                        </Transition>
+                                                    </Menu>
                                                 </td>
                                             </tr>
                                         ))}
@@ -103,6 +151,17 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                 project={project}
                 isOpen={inviteModalOpen}
                 onClose={() => setInviteModalOpen(false)}
+            />
+            <WarningPopUp
+                loading={loading}
+                header={`Are you sure you want to remove ${memberToDelete?.name} from this project ?`}
+                isOpen={memberToDelete ? true : false}
+                action="Yes"
+                text="You will have to invite the user again"
+                onAction={() => {
+                    handleRemoveMember().then(() => setMembertoDelete(null));
+                }}
+                onClose={() => setMembertoDelete(null)}
             />
         </>
     );

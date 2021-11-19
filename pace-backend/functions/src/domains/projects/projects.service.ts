@@ -268,7 +268,7 @@ class ProjectService {
 
     const member = project.members.filter((p) => p.uid === userId)[0];
     if (!member) {
-      paceLoggingService.error("Error while leaving project - no corresponding memer found");
+      paceLoggingService.error("Error while leaving project - no corresponding member found");
       return { error: "User is not a member of requested project" };
     }
 

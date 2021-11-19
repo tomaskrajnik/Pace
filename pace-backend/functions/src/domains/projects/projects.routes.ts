@@ -1,7 +1,14 @@
 import { Router } from "express";
 import { validateFirebaseIdToken } from "../../shared/middleware/auth.middleware";
 import { validateRequest, ValidationRouteTypes } from "../../utils/validation";
-import { createProject, deleteProject, inviteMember, leaveProject, updateProject } from "./projects.controller";
+import {
+  createProject,
+  deleteProject,
+  inviteMember,
+  leaveProject,
+  removeMemberFromProject,
+  updateProject,
+} from "./projects.controller";
 
 const projectsRouter = Router();
 
@@ -98,5 +105,14 @@ projectsRouter.post(
  * @param {string} id.query.required Id of the project
  */
 projectsRouter.get("/:id/leave", validateFirebaseIdToken, leaveProject);
+
+/**
+ * Remove member from project
+ * @route POGetST /projects/:id/remove/:id
+ * @group Projects - API for Pace projects manipulation
+ * @param {string} id.query.required Id of the project
+ * @param {string} userId.query.required Id of the user
+ */
+projectsRouter.get("/:id/remove/:userId", validateFirebaseIdToken, removeMemberFromProject);
 
 export { projectsRouter };

@@ -15,6 +15,7 @@ import {
     InviteProjectMemberRequest,
     InviteProjectMemberResponse,
     LeaveProjectResponse,
+    RemoveUserFromProjectResponse,
 } from './ProjectService.types';
 
 class ProjectService {
@@ -113,6 +114,28 @@ class ProjectService {
     public async leaveProject(id: string) {
         try {
             const response = await this.axios.get<LeaveProjectResponse>(`${this.API}/${id}/leave`);
+
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            return response.data.data;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Remove user from project
+     * @param userId
+     * @param projectId
+     * @returns
+     */
+    public async removeMemberFromProject(userId: string, projectId: string) {
+        try {
+            const response = await this.axios.get<RemoveUserFromProjectResponse>(
+                `${this.API}/${projectId}/remove/${userId}`,
+            );
 
             if (response.data.error) {
                 throw new Error(response.data.error);

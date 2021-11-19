@@ -32,6 +32,11 @@ export interface LeaveProjectSuccess {
     success: boolean;
 }
 
+export interface RemoveUserFromProjectSuccess {
+    success: boolean;
+}
+
 export type CreateProjectResponse = APISuccess<CreateProjectSuccess> & APIError;
 export type LeaveProjectResponse = APISuccess<LeaveProjectSuccess> & APIError;
 export type InviteProjectMemberResponse = APISuccess<InviteProjectMemberSuccess> & APIError;
+export type RemoveUserFromProjectResponse = APISuccess<RemoveUserFromProjectSuccess> & APIError;

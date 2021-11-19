@@ -155,3 +155,30 @@ export async function leaveProject(req: any, res: any) {
     sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
   }
 }
+
+/**
+ * @param {any} req
+ * @param {any} res
+ */
+export async function removeMemberFromProject(req: any, res: any) {
+  const { user_id: userId } = req.user;
+  const { id, userId: memberId } = req.params;
+
+  paceLoggingService.log(`projects/${id}/remove/${userId}`);
+
+  const response = await projectService.getProjectAndValidatePermissions(userId, id);
+  if (response.error) {
+    paceLoggingService.error(`Error while removing user from the project ${response.error}`);
+    return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
+      error: response.error,
+    });
+  }
+  try {
+    const leaveResponse = await projectService.leaveProject(memberId, id);
+    if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, leaveResponse);
+    return sendResponse(res, HttpStatusCode.OK, leaveResponse);
+  } catch (err) {
+    paceLoggingService.error("Error while leaving the project", { error: err });
+    sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
+  }
+}

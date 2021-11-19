@@ -32,7 +32,7 @@ export const PendingInvitationTable: React.FC<PendinginvitationTableProps> = ({ 
     return (
         <div>
             <div className="flex mt-10 sm:mb-4 justify-between">
-                <NormalText className="text-xl">Pending Invitations</NormalText>
+                <NormalText className="text-xl">Pending invitations</NormalText>
             </div>
 
             <div className="flex flex-col">

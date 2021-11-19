@@ -44,7 +44,7 @@ const Project: React.FC = ({}) => {
         {
             id: 3,
             title: 'Members settings',
-            component: <ProjectMembers members={project.members} />,
+            component: <ProjectMembers />,
             icon: <UsersIcon className="text-gray-700" />,
         },
     ]);

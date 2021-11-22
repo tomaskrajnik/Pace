@@ -11,6 +11,7 @@ import ProfilePicture from '../common/ProfilePicture';
 import { WarningPopUp } from '../layout/WarningPopUp';
 import { InviteMemberModal } from './InviteMemberModal';
 import { ProjectBadge } from './ProjectBadge';
+import { UpdateMemberRoleModal } from './UpdateMemberRoleModal';
 
 interface ProjectMembersRoleTableProps {
     project: Project;
@@ -20,6 +21,7 @@ interface ProjectMembersRoleTableProps {
 
 export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ project, userRole, user }) => {
     const [inviteModalOpen, setInviteModalOpen] = useState(false);
+    const [updateRoleMember, setUpdateRoleMember] = useState<ProjectMember | null>();
     const [memberToDelete, setMembertoDelete] = useState<ProjectMember | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -55,7 +57,7 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                 <div className="flex flex-col">
                     <div className="-my-2 sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                            <div className="shadow-md  border-b border-gray-200 sm:rounded-lg">
+                            <div className="shadow overflow-hidden  border-b border-gray-200 sm:rounded-lg">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-white">
                                         <tr>
@@ -117,7 +119,22 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                                                             leaveFrom="transform opacity-100 scale-100"
                                                             leaveTo="transform opacity-0 scale-95"
                                                         >
-                                                            <Menu.Items className="origin-top-right absolute right-5  -mt-10 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                            <Menu.Items className="origin-top-right absolute right-5  -mt-16 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                                <Menu.Item>
+                                                                    {({ active }) => (
+                                                                        <button
+                                                                            onClick={() => setUpdateRoleMember(m)}
+                                                                            className={classNames(
+                                                                                active
+                                                                                    ? 'bg-blue-100 text-red-600 '
+                                                                                    : '',
+                                                                                'block w-full text-left px-4 py-2 text-sm text-blue-600 w-100',
+                                                                            )}
+                                                                        >
+                                                                            Update user
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
                                                                 <Menu.Item>
                                                                     {({ active }) => (
                                                                         <button
@@ -129,7 +146,7 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                                                                                 'block w-full text-left px-4 py-2 text-sm text-red-600 w-100',
                                                                             )}
                                                                         >
-                                                                            Delete user
+                                                                            Remove user
                                                                         </button>
                                                                     )}
                                                                 </Menu.Item>
@@ -151,6 +168,12 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                 project={project}
                 isOpen={inviteModalOpen}
                 onClose={() => setInviteModalOpen(false)}
+            />
+            <UpdateMemberRoleModal
+                isOpen={updateRoleMember ? true : false}
+                onClose={() => setUpdateRoleMember(null)}
+                project={project}
+                member={updateRoleMember ?? null}
             />
             <WarningPopUp
                 loading={loading}

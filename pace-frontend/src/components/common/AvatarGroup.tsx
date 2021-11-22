@@ -11,7 +11,7 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ projectMembers }) => {
     const shouldConcatenate = useMemo(() => avatars.length > 4, [avatars]);
     const number = avatars.splice(shouldConcatenate ? 3 : 4);
     return (
-        <div className="flex -space-x-1 overflow-hidden">
+        <div className="flex -space-x-3 overflow-hidden">
             {avatars.map((pm, idx) => (
                 <ProfilePicture name={pm.name} photoUrl={pm.photoUrl} avatarColor={pm.avatarColor} key={idx} />
             ))}

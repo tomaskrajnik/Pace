@@ -1,76 +1,45 @@
-import React, { Fragment, useRef, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import NormalText from '../common/NormalText';
-import * as yup from 'yup';
-import NormalButton from '../common/NormalButton';
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import Input from '../form/Input';
-import { Project, ProjectMemberRole } from '../../models/projects.model';
-import { ProjectRoleSelector } from '../form/ProjectRoleSelector';
-import { InviteProjectMemberRequest } from '../../services/ProjectService.types';
-import ProjectService from '../../services/ProjectService';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { Project, ProjectMember, ProjectMemberRole } from '../../models/projects.model';
+import ProjectService from '../../services/ProjectService';
+import NormalButton from '../common/NormalButton';
+import NormalText from '../common/NormalText';
+import { ProjectRoleSelector } from '../form/ProjectRoleSelector';
 
 interface InviteMemberModalProps {
     isOpen: boolean;
     onClose: () => void;
     project: Project;
-    invitedBy: string;
+    member: ProjectMember | null;
 }
 
-interface IFormInputs {
-    email: string;
-    role: ProjectMemberRole;
-    projectName: string;
-    invitedBy: string;
-}
-
-const schema = yup.object().shape({
-    email: yup.string().email().label('Email').required(),
-});
-
-export const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose, isOpen, project, invitedBy }) => {
+export const UpdateMemberRoleModal: React.FC<InviteMemberModalProps> = ({ isOpen, onClose, project, member }) => {
     const cancelButtonRef = useRef(null);
-
-    const {
-        control,
-        handleSubmit,
-        reset,
-        clearErrors,
-        setValue,
-        formState: { errors },
-    } = useForm<IFormInputs>({
-        defaultValues: {
-            email: '',
-            role: ProjectMemberRole.EDITOR,
-            projectName: project.name,
-            invitedBy: invitedBy,
-        },
-        mode: 'onSubmit',
-        resolver: yupResolver(schema),
-    });
-
     const [selected, setSelected] = useState(ProjectMemberRole.EDITOR);
     const [loading, setLoading] = useState(false);
-
     useEffect(() => {
-        setValue('role', selected);
-    }, [selected]);
+        if (member) setSelected(member.role);
+    }, [member]);
 
-    const handleInvite = async (data: InviteProjectMemberRequest) => {
+    if (!member) return null;
+
+    const handleUpdateRole = async () => {
+        const membersClone = [...project.members];
+        membersClone.forEach((m) => {
+            if (m.uid === member.uid) return (m.role = selected);
+        });
         try {
             setLoading(true);
-            await ProjectService.inviteMember(project.uid, data);
-            toast.success('Invitation sent');
-        } catch (err: any) {
-            toast.error(err.message);
+            await ProjectService.updateProject(project.uid, { members: membersClone });
+            toast.success('Success');
+        } catch (err) {
+            toast.error('Something went wrong');
         } finally {
             setLoading(false);
             onClose();
         }
     };
-
     return (
         <Transition.Root show={isOpen} as={Fragment}>
             <Dialog as="div" className="fixed z-50 inset-0" initialFocus={cancelButtonRef} onClose={onClose}>
@@ -102,27 +71,7 @@ export const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose, i
                     >
                         <div className="inline-block align-bottom bg-white rounded-lg text-left  shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 rounded-lg">
-                                <NormalText className="text-lg">Invite collaborator</NormalText>
-                                <div className="col-span-3 mt-3 sm:col-span-2">
-                                    <Controller
-                                        name="email"
-                                        control={control}
-                                        render={({ field: { onChange, value } }) => (
-                                            <Input
-                                                onChange={onChange}
-                                                value={value}
-                                                name="email"
-                                                leftLabel="@"
-                                                label="Email"
-                                                position="standalone"
-                                                id="email"
-                                                type="email"
-                                                error={errors.email?.message ? true : false}
-                                            />
-                                        )}
-                                    />
-                                    <NormalText className="text-red-500 mt-1">{errors.email?.message}</NormalText>
-                                </div>
+                                <NormalText className="text-lg">{`Change user role for ${member.name}`}</NormalText>
 
                                 <ProjectRoleSelector selected={selected} onSelected={setSelected} />
                             </div>
@@ -133,16 +82,15 @@ export const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose, i
                                         title="Cancel"
                                         variant="secondary"
                                         onClick={() => {
-                                            clearErrors();
-                                            reset();
                                             onClose();
                                         }}
                                     />
                                     <NormalButton
                                         loading={loading}
-                                        title="Invite"
+                                        disabled={selected === member.role}
+                                        title="Save"
                                         variant="primary"
-                                        onClick={handleSubmit(handleInvite)}
+                                        onClick={handleUpdateRole}
                                     />
                                 </div>
                             </div>

@@ -1,9 +1,9 @@
 import { Listbox, Transition } from '@headlessui/react';
 import { SelectorIcon } from '@heroicons/react/solid';
 import React, { Fragment } from 'react';
-import { ProjectMemberRole } from '../../../models/projects.model';
-import NormalText from '../../common/NormalText';
-import { ProjectBadge } from '../ProjectBadge';
+import { ProjectMemberRole } from '../../models/projects.model';
+import NormalText from '../common/NormalText';
+import { ProjectBadge } from '../project/ProjectBadge';
 
 interface ProjectRoleSelectorProps {
     selected: ProjectMemberRole;

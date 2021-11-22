@@ -12,10 +12,12 @@ import { setProjects, setProjectsLoading } from '../store/projects/projects.acti
 import {
     CreateProjectRequest,
     CreateProjectResponse,
+    DeleteProjectResponse,
     InviteProjectMemberRequest,
     InviteProjectMemberResponse,
     LeaveProjectResponse,
     RemoveUserFromProjectResponse,
+    UpdateProjectResponse,
 } from './ProjectService.types';
 
 class ProjectService {
@@ -114,6 +116,45 @@ class ProjectService {
     public async leaveProject(id: string) {
         try {
             const response = await this.axios.get<LeaveProjectResponse>(`${this.API}/${id}/leave`);
+
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            return response.data.data;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Update ptoject
+     * @param {string} projectId
+     * @param {Parial<Poject>} data
+     * @returns
+     */
+    public async updateProject(projectId: string, data: Partial<Project>) {
+        try {
+            const response = await this.axios.put<UpdateProjectResponse>(`${this.API}/update/${projectId}`, data);
+
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            return response.data.data;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Delete ptoject
+     * @param {string} projectId
+     * @returns
+     */
+    public async deleteProject(projectId: string) {
+        try {
+            const response = await this.axios.delete<DeleteProjectResponse>(`${this.API}/delete/${projectId}`);
 
             if (response.data.error) {
                 throw new Error(response.data.error);

@@ -16,6 +16,8 @@ export const SIGNUP_FAILURE = 'SIGNUP_FAILURE';
 
 export const LOGOUT = 'LOGOUT';
 
+export const SET_UPDATED_USER = 'SET_UPDATED_USER';
+
 interface LoginAction extends Action {
     type: typeof LOGIN;
 }
@@ -48,6 +50,11 @@ interface LogoutAction extends Action {
     type: typeof LOGOUT;
 }
 
+interface SetUpdatedUser extends Action {
+    type: typeof SET_UPDATED_USER;
+    payload: { user: User };
+}
+
 export type AuthActionTypes =
     | LoginAction
     | LoginFailureAction
@@ -55,7 +62,8 @@ export type AuthActionTypes =
     | SignupAction
     | SignupSuccesAction
     | SignupFailureAction
-    | LogoutAction;
+    | LogoutAction
+    | SetUpdatedUser;
 
 export type AuthThunkResult<ReturnType = void> = ThunkAction<ReturnType, AuthState, undefined, AuthActionTypes>;
 export type AuthThunkDispatcher = ThunkDispatch<AuthState, undefined, AuthActionTypes>;

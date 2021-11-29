@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch } from 'react-router';
 import Dashboard from '../pages/dashboard/Dashboard';
 import AuthRoute from '../components/routes/AuthRoute';
@@ -10,8 +10,14 @@ import { isLoggedInSelector } from '../store/auth/auth.selectors';
 import { connect } from 'react-redux';
 import { RootState } from '../store';
 import ResetPassword from '../pages/resetPassword/ResetPassword';
+import UserSettings from '../pages/user/UserSettings';
+import UserService from '../services/UserService';
+import Project from '../pages/project/Project';
 
 const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated }) => {
+    useEffect(() => {
+        if (authenticated) UserService.listenToUserChanges();
+    }, [authenticated]);
     return (
         <Switch>
             <>
@@ -23,6 +29,8 @@ const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated })
                     component={ResetPassword}
                 />
                 <AuthRoute authenticated={authenticated} path={AuthRoutes.Dashboard} component={Dashboard} />
+                <AuthRoute authenticated={authenticated} path={AuthRoutes.UserSettings} component={UserSettings} />
+                <AuthRoute authenticated={authenticated} path={`${AuthRoutes.Project}/:id`} component={Project} />
             </>
         </Switch>
     );

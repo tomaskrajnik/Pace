@@ -6,6 +6,7 @@ export class User {
   public email: string;
   public name: string;
   public photoUrl?: string;
+  public avatarColor: string;
   public createdAt: number;
   public phoneNumber?: string;
   public emailVerified?: boolean;
@@ -22,10 +23,12 @@ export class User {
     this.email = userConfig.email;
     this.name = userConfig.name;
     this.photoUrl = userConfig.photoUrl;
+    this.avatarColor = userConfig.avatarColor;
     this.createdAt = userConfig.createdAt;
     this.phoneNumber = userConfig.phoneNumber;
     this.emailVerified = userConfig.emailVerified;
     this.companyName = userConfig.companyName;
     this.projects = userConfig.projects;
+    this.jobTitle = userConfig.jobTitle;
   }
 }

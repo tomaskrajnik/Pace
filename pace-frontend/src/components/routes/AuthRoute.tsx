@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Redirect, RouteProps, RouteComponentProps } from 'react-router-dom';
 import { NonAuthRoutes } from '../../routes/routes.types';
+import Navbar from '../layout/Navbar';
 
 interface AuthRouteProps {
     component: React.FC<RouteComponentProps>;
@@ -13,7 +14,14 @@ const AuthRoute: React.FC<AuthRouteProps & RouteProps> = ({ component: Component
             exact
             {...rest}
             render={(props) =>
-                authenticated ? <Component {...props} /> : <Redirect to={{ pathname: NonAuthRoutes.Signup }} />
+                authenticated ? (
+                    <>
+                        <Navbar />
+                        <Component {...props} />
+                    </>
+                ) : (
+                    <Redirect to={{ pathname: NonAuthRoutes.Signup }} />
+                )
             }
         />
     );

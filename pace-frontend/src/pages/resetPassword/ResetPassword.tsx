@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import paceLogo from '../../assets/svg/pace-logo.svg';
-import Input from '../../components/auth/Input';
+import Input from '../../components/form/Input';
 import { useForm, Controller } from 'react-hook-form';
 import Screen from '../../components/layout/Screen';
 import NormalText from '../../components/common/NormalText';
@@ -42,7 +42,7 @@ const ResetPassword: React.FC = () => {
         }
     };
     return (
-        <Screen>
+        <Screen withoutopPadding>
             <div className="min-h-full flex justify-center py-10 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full">
                     <img className="mx-auto h-5 w-auto" src={paceLogo} alt="Pace Logo" />

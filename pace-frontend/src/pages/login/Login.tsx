@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import paceLogo from '../../assets/svg/pace-logo.svg';
-import Input from '../../components/auth/Input';
+import Input from '../../components/form/Input';
 import { useForm, Controller } from 'react-hook-form';
 import { AuthThunkDispatcher } from '../../store/auth/auth.types';
 import * as authThunks from '../../store/auth/auth.thunk';
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
         }
     };
     return (
-        <Screen>
+        <Screen withoutopPadding>
             <div className="min-h-full flex justify-center py-10 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full">
                     <img className="mx-auto h-5 w-auto" src={paceLogo} alt="Pace Logo" />
@@ -118,9 +118,9 @@ const Login: React.FC = () => {
                             </div>
                         </form>
                         <div className="mt-4 text-center flex justify-center">
-                            <NormalText>Don&apos;t have an account yet? </NormalText>
+                            <NormalText className="mr-1">Don&apos;t have an account yet?</NormalText>
                             <Link to={NonAuthRoutes.Signup}>
-                                <NormalText className="text-blue-500 hover:text-blue-600">Sign up</NormalText>
+                                <NormalText className="text-blue-500 hover:text-blue-600"> Sign up</NormalText>
                             </Link>
                         </div>
                     </div>

@@ -147,7 +147,7 @@ export async function deleteUser(req: any, res: any) {
 
   if (!uid)
     return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
-      errors: "No user id provided.",
+      error: "No user id provided.",
     });
 
   const response = await userService.deleteUser(uid);

@@ -31,17 +31,43 @@ class InvitationService {
    * @param {string} projectId
    * @param {string} email
    * @param {string} role enum "owner" | "viewer" | "editor"
+   * @param {string} projectName
+   * @param {string} invitedBy email
    */
-  public async createInvitation(projectId: string, email: string, role: ProjectMemberRole) {
+  public async createInvitation(
+    projectId: string,
+    email: string,
+    role: ProjectMemberRole,
+    projectName: string,
+    invitedBy: string
+  ) {
     paceLoggingService.log(`${InvitationService.name}.${this.createInvitation.name}, Creating new invitation:,`, {
-      data: { projectId, email, role },
+      data: { projectId, email, role, projectName, invitedBy },
     });
 
     const userInvitations = await this.getInvitationsForUser(email);
-    const invitationExists = userInvitations.some((i) => i.projectId === projectId);
+    const invitationExists = userInvitations.some((i) => i.projectId === projectId && i.accepted === false);
     if (invitationExists) return { error: "User already invited" };
 
-    const invitation: Omit<Invivation, "uid"> = { projectId, email, role, createdAt: Date.now(), accepted: false };
+    const project = await projectService.findProjectInFirestore(projectId);
+    if (!project) return { error: "Somehting went wrong" };
+
+    for (const m of project.members) {
+      const member = await userService.findUserInFirebase(m.uid);
+      if (member?.email === email) {
+        return { error: `User with email: ${email} is already part of this project` };
+      }
+    }
+
+    const invitation: Omit<Invivation, "uid"> = {
+      projectId,
+      email,
+      role,
+      projectName,
+      invitedBy,
+      createdAt: Date.now(),
+      accepted: false,
+    };
     const invitationSnapshot = await db.collection(databaseCollections.INVITATIONS).add(invitation);
     paceLoggingService.log(
       `${InvitationService.name}.${this.createInvitation.name}  New invitation successfully created`,
@@ -174,6 +200,41 @@ class InvitationService {
   public async getInvitationsForUser(email: string) {
     const snapshot = await db.collection(databaseCollections.INVITATIONS).where("email", "==", email).get();
     return firebaseHelper.docsToObjects(snapshot.docs) as Invivation[];
+  }
+
+  /**
+   * Check if user is member of the project
+   * @param userId
+   * @param invitationId
+   * @returns
+   */
+  public async userCanDeleteInvitation(userId: string, invitationId: string) {
+    const invitation = await this.findInvitationInFirebase(invitationId);
+    if (!invitation) return { error: "No invitation found" };
+    const project = await projectService.findProjectInFirestore(invitation.projectId);
+    if (!project) return { error: "No project found" };
+
+    return project.members.some((m) => m.uid === userId && m.role !== ProjectMemberRole.VIEWER);
+  }
+
+  /**
+   * Find invitation by uid
+   * @param {string} uid invitation id
+   * @return {Promise<Invitation[]>}
+   */
+  public async findInvitationInFirebase(uid: string) {
+    paceLoggingService.log(
+      `${InvitationService.name}.${this.findInvitationInFirebase.name} Getting firestore inivtation`,
+      {
+        uid,
+      }
+    );
+    const [err, doc] = await to(db.collection(databaseCollections.INVITATIONS).doc(uid).get());
+    if (err) {
+      paceLoggingService.error(JSON.stringify(err));
+    }
+    const invitation = doc?.data();
+    return invitation ? ({ uid, ...invitation } as Invivation) : null;
   }
 }
 

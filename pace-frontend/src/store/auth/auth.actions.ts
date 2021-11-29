@@ -5,6 +5,7 @@ import {
     LOGIN_FAILURE,
     LOGIN_SUCCESS,
     LOGOUT,
+    SET_UPDATED_USER,
     SIGNUP,
     SIGNUP_FAILURE,
     SIGNUP_SUCCESS,
@@ -36,4 +37,8 @@ export function signUpFailure(error: string): AuthActionTypes {
 
 export function logout(): AuthActionTypes {
     return { type: LOGOUT };
+}
+
+export function setUpdateUser(user: User): AuthActionTypes {
+    return { type: SET_UPDATED_USER, payload: { user } };
 }

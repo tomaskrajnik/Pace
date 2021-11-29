@@ -5,6 +5,7 @@ import { User } from "./users.model";
 import { paceLoggingService } from "../../utils/services/logger";
 import { Project, ProjectMemberRole } from "../projects/projects.model";
 import { projectService } from "../projects/projects.service";
+import { generatePastelColor } from "../../utils/colors";
 
 class UserService {
   private static instance: UserService;
@@ -42,6 +43,7 @@ class UserService {
       companyName: companyName ?? "",
       phoneNumber: "",
       projects: [],
+      avatarColor: generatePastelColor(),
     };
 
     const user = { email, name, ...defaultUserProps };

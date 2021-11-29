@@ -10,6 +10,8 @@ export class Invivation {
   public createdAt: number;
   public role: ProjectMemberRole;
   public accepted: boolean;
+  public projectName: string;
+  public invitedBy: string;
 
   /**
    * class Invitation constructor
@@ -22,5 +24,7 @@ export class Invivation {
     this.createdAt = projectConfig.createdAt;
     this.role = projectConfig.role;
     this.accepted = projectConfig.accepted;
+    this.projectName = projectConfig.projectName;
+    this.invitedBy = projectConfig.invitedBy;
   }
 }

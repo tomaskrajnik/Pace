@@ -19,8 +19,8 @@ export const validateRequest = (route: ValidationRouteTypes) => {
         body("name").isLength({ min: 2, max: 25 }).withMessage("Name must be between 2 and 25 characters"),
         body("uid").not().isEmpty().withMessage("Uid cannot be empty"),
         body("phoneNumber", "phoneNumber does not exists").optional().isString(),
-        body("companyName", "companyName does not exists").optional().isNumeric(),
-        body("jobTitle", "jobTitle does not exists").optional().isNumeric(),
+        body("companyName", "companyName does not exists").optional().isString(),
+        body("jobTitle", "jobTitle does not exists").optional().isString(),
         body("photoUrl", "photoUrl does not exists").optional().isString(),
       ];
     }
@@ -41,8 +41,8 @@ export const validateRequest = (route: ValidationRouteTypes) => {
         body("name", "name does not exists").optional().isString(),
         body("email", "email does not exists").optional().isString(),
         body("phoneNumber", "phoneNumber does not exists").optional().isString(),
-        body("companyName", "companyName does not exists").optional().isNumeric(),
-        body("jobTitle", "jobTitle does not exists").optional().isNumeric(),
+        body("companyName", "companyName does not exists").optional().isString(),
+        body("jobTitle", "jobTitle does not exists").optional().isString(),
         body("emailVerified", "emailVerified does not exists").optional().isBoolean(),
         body("photoUrl", "photoUrl does not exists").optional().isString(),
       ];
@@ -56,6 +56,8 @@ export const validateRequest = (route: ValidationRouteTypes) => {
       return [
         body("name", "name does not exists").optional().isString(),
         body("photoUrl", "photoUrl does not exists").optional().isString(),
+        body("projectName", "projectName does not exists").optional().isString(),
+        body("invitedBy", "invitedBy does not exists").optional().isString(),
       ];
     }
     case ValidationRouteTypes.InviteUser: {

@@ -324,14 +324,23 @@ class ProjectService {
     const { projectId } = snapshot.data() as Milestone;
     const project = await this.findProjectInFirestore(projectId);
     if (!project) return;
+    let milestones: string[] = [];
     if (project.milestones.includes(milestoneId)) {
       // Means we have to delete it from project
-      const milestones = project.milestones.filter((m) => m !== milestoneId);
-      await this.updateProject(project.uid, { milestones });
+      paceLoggingService.log(
+        `${ProjectService.name}.${projectService.updateMilestonesInProject.name}: Removing milestone from project`,
+        { milestoneId }
+      );
+      milestones = project.milestones.filter((m) => m !== milestoneId);
     } else {
       // Means we have to add it to the project
-      await this.updateProject(project.uid, { milestones: [...project.milestones, milestoneId] });
+      paceLoggingService.log(
+        `${ProjectService.name}.${projectService.updateMilestonesInProject.name}: Adding milestone from project`,
+        { milestoneId }
+      );
+      milestones = [...project.milestones, milestoneId];
     }
+    await this.updateProject(project.uid, { milestones });
   }
 
   /**

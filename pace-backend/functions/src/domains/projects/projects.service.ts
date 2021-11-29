@@ -4,7 +4,8 @@ import { db } from "../../shared/database/admin";
 import { databaseCollections } from "../../shared/enums/database-collections.enum";
 import { firebaseHelper } from "../../shared/services/firebase-helper.service";
 import { paceLoggingService } from "../../utils/services/logger";
-import { Invivation } from "../invitations/invitations.model";
+import { Invitation } from "../invitations/invitations.model";
+import { Milestone } from "../milestones/milestones.model";
 import { User } from "../users/users.model";
 import { userService } from "../users/users.service";
 import { Project, ProjectMember, ProjectMemberRole } from "./projects.model";
@@ -85,7 +86,7 @@ class ProjectService {
   /**
    * Find project by uid in Firestore
    * @param {string} uid Project id
-   * @return {Promise<admin.auth.UserRecord>}
+   * @return {Promise<Project>}
    */
   public async findProjectInFirestore(uid: string) {
     paceLoggingService.log(`${ProjectService.name}.${this.findProjectInFirestore.name} Getting firestore project`, {
@@ -119,8 +120,8 @@ class ProjectService {
 
   /**
    * Update the project
-   * @param projectId
-   * @param data
+   * @param {string} projectId
+   * @param {Partial<Project>} data
    * @returns {boolean}
    */
   public async updateProject(projectId: string, data: Partial<Project> = {}) {
@@ -172,6 +173,7 @@ class ProjectService {
     }
     return { project };
   }
+
   /**
    * Update invitations in project after inviting project memer
    * @param snapshot
@@ -179,7 +181,7 @@ class ProjectService {
    */
   async updateInvitations(snapshot: any, context: any) {
     const invitationId = snapshot.id;
-    const data: Omit<Invivation, "uid"> = snapshot.data();
+    const data: Omit<Invitation, "uid"> = snapshot.data();
     const project = await this.findProjectInFirestore(data.projectId);
     if (!project) {
       return paceLoggingService.error("Project not found while updating invitations", { invitationId });
@@ -309,6 +311,27 @@ class ProjectService {
     const projects = firebaseHelper.docsToObjects(snapshot.docs);
 
     return projects ? projects : null;
+  }
+
+  /**
+   * Automatically updates milestones in project on milestone create or delete
+   * @param userId
+   * @param role
+   * @returns
+   */
+  public async updateMilestonesInProject(snapshot: any, context: any): Promise<void> {
+    const milestoneId = snapshot.id;
+    const { projectId } = snapshot.data() as Milestone;
+    const project = await this.findProjectInFirestore(projectId);
+    if (!project) return;
+    if (project.milestones.includes(milestoneId)) {
+      // Means we have to delete it from project
+      const milestones = project.milestones.filter((m) => m !== milestoneId);
+      await this.updateProject(project.uid, { milestones });
+    } else {
+      // Means we have to add it to the project
+      await this.updateProject(project.uid, { milestones: [...project.milestones, milestoneId] });
+    }
   }
 
   /**

@@ -51,10 +51,10 @@ export async function deleteProject(req: any, res: any) {
 
   try {
     const deleteResponse = await projectService.deleteProject(id);
-    if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, deleteResponse);
+    if (deleteResponse.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, deleteResponse);
     return sendResponse(res, HttpStatusCode.OK, deleteResponse);
   } catch (err) {
-    paceLoggingService.error("Error while creating the project", { error: err });
+    paceLoggingService.error("Error while deleting the project", { error: err });
     sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
   }
 }

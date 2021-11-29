@@ -139,6 +139,7 @@ export const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({ onCl
                                         <div>
                                             <NormalText>Start date:</NormalText>
                                             <DatePicker
+                                                dateFormat="dd/MM/yyyy"
                                                 selected={startDate}
                                                 onChange={(date: Date | null) => date && setStartDate(date)}
                                                 customInput={React.createElement(React.forwardRef(CustomDatePicker))}
@@ -147,6 +148,7 @@ export const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({ onCl
                                         <div>
                                             <NormalText>End date:</NormalText>
                                             <DatePicker
+                                                dateFormat="dd/MM/yyyy"
                                                 selected={endDate}
                                                 onChange={(date: Date | null) => date && setEndDate(date)}
                                                 customInput={React.createElement(React.forwardRef(CustomDatePicker))}

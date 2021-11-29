@@ -6,16 +6,18 @@ import authReducer from './auth/auth.reducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import projectsReducer from './projects/projects.reducer';
 import invitationsReducer from './invitations/invitations.reducer';
+import milestonesReducer from './milestones/milestones.reducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
     projects: projectsReducer,
     invitations: invitationsReducer,
+    milestones: milestonesReducer,
 });
 
 const persistedState = loadState();
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = any;
 
 const middleware: Middleware[] = [thunk as ThunkMiddleware<RootState>];
 export const store = createStore(rootReducer, persistedState, composeWithDevTools(applyMiddleware(...middleware)));

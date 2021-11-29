@@ -273,8 +273,11 @@ class ProjectService {
     }
 
     if (member.role === ProjectMemberRole.OWNER) {
-      // Delete project if the owner removes it
-      return await this.deleteProject(projectId);
+      const projectOwners = project.members.filter((m) => m.role === ProjectMemberRole.OWNER);
+      if (projectOwners.length === 1) {
+        // Delete project if single owner removes it
+        return await this.deleteProject(projectId);
+      }
     }
 
     const updatedMembers = project.members.filter((m) => m.uid !== userId);

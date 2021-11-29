@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tr:nth-child(odd) {
+    @apply bg-white;
+}
+.tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+.tr-border-right {
+    border-right: #e6e4e4 1px solid;
+}
+
+.tr-border-bottom {
+    border-bottom: #e6e4e4 1px solid;
+}

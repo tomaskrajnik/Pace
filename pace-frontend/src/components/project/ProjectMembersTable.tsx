@@ -131,7 +131,7 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                                                                                 'block w-full text-left px-4 py-2 text-sm text-blue-600 w-100',
                                                                             )}
                                                                         >
-                                                                            Update user
+                                                                            Update role
                                                                         </button>
                                                                     )}
                                                                 </Menu.Item>

@@ -1,9 +1,8 @@
 import { ProjectMemberRole } from "../projects/projects.model";
-
 /**
  * class Invitation
  */
-export class Invivation {
+export class Invitation {
   public uid: string;
   public projectId: string;
   public email: string;
@@ -17,14 +16,14 @@ export class Invivation {
    * class Invitation constructor
    * @param {any} invitationConfig
    */
-  constructor(projectConfig: any) {
-    this.uid = projectConfig.uid;
-    this.projectId = projectConfig.projectId;
-    this.email = projectConfig.email;
-    this.createdAt = projectConfig.createdAt;
-    this.role = projectConfig.role;
-    this.accepted = projectConfig.accepted;
-    this.projectName = projectConfig.projectName;
-    this.invitedBy = projectConfig.invitedBy;
+  constructor(invitationConfig: any) {
+    this.uid = invitationConfig.uid;
+    this.projectId = invitationConfig.projectId;
+    this.email = invitationConfig.email;
+    this.createdAt = invitationConfig.createdAt;
+    this.role = invitationConfig.role;
+    this.accepted = invitationConfig.accepted;
+    this.projectName = invitationConfig.projectName;
+    this.invitedBy = invitationConfig.invitedBy;
   }
 }

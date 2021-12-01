@@ -8,10 +8,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { milestonesSelector } from '../../../store/milestones/milestones.selector';
 import { setMilestones } from '../../../store/milestones/milestones.actions';
 import { GanttViewModeButtons } from './GantViewModeButton';
+import { MilestoneToolTip } from '../../milestones/MilestoneToolTip';
+import { MilestoneSlideOver } from '../../milestones/MilestoneSlideOver';
 
-export const GantChart: React.FC = () => {
+interface GantChartProps {
+    onAddNew: () => void;
+}
+
+export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
     const [viewMode, setViewMode] = useState(ViewMode.Month);
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [milestoneToOpen, setMilestoneToOpen] = useState<{ milestone: Milestone | null; isOpen: boolean }>({
+        milestone: null,
+        isOpen: false,
+    });
+
     const milestones = useSelector(milestonesSelector);
     const dispatch = useDispatch();
     const columnWidth = React.useMemo(() => {
@@ -28,7 +39,7 @@ export const GantChart: React.FC = () => {
                 return 100;
         }
     }, [viewMode]);
-
+    if (!milestones) return null;
     const mapMilestonesToTasks = (milestones: Milestone[]) => {
         const mappedtasks: Task[] = [];
         milestones.forEach((m) => {
@@ -54,24 +65,17 @@ export const GantChart: React.FC = () => {
         dispatch(setMilestones(newMilestones));
     };
 
-    const handleTaskDelete = (task: Task) => {
-        const conf = window.confirm('Are you sure about ' + task.name + ' ?');
-        if (conf) {
-            setTasks(tasks.filter((t) => t.id !== task.id));
-        }
-        return conf;
-    };
-
     const handleProgressChange = async (task: Task) => {
         setTasks(tasks.map((t) => (t.id === task.id ? task : t)));
     };
 
     const handleDblClick = (task: Task) => {
-        alert('On Double Click event Id:' + task.id);
+        handleOpenSlideOver(task);
     };
 
-    const handleSelect = (task: Task, isSelected: boolean) => {
-        console.log(task.name + ' has ' + (isSelected ? 'selected' : 'unselected'));
+    const handleOpenSlideOver = (task: Task) => {
+        const milestone = milestones.filter((m) => m.uid === task.id);
+        setMilestoneToOpen({ milestone: milestone[0], isOpen: true });
     };
 
     useEffect(() => {
@@ -87,10 +91,8 @@ export const GantChart: React.FC = () => {
                 {tasks.length !== 0 && (
                     <Gantt
                         onDateChange={handleTaskChange}
-                        onDelete={handleTaskDelete}
                         onProgressChange={handleProgressChange}
                         onDoubleClick={handleDblClick}
-                        onSelect={handleSelect}
                         barCornerRadius={4}
                         viewMode={viewMode}
                         columnWidth={columnWidth}
@@ -104,6 +106,7 @@ export const GantChart: React.FC = () => {
                         TaskListHeader={({ headerHeight, rowWidth }) => (
                             <MilestoneListHeader headerHeight={headerHeight} rowWidth={rowWidth} />
                         )}
+                        TooltipContent={({ task }) => <MilestoneToolTip task={task} />}
                         TaskListTable={({
                             rowHeight,
                             rowWidth,
@@ -114,16 +117,30 @@ export const GantChart: React.FC = () => {
                         }) => (
                             <MilestoneListTable
                                 tasks={tasks}
+                                onMilestoneClick={(t) => handleOpenSlideOver(t)}
                                 selectedTaskId={selectedTaskId}
                                 onExpanderClick={onExpanderClick}
                                 setSelectedTask={setSelectedTask}
                                 rowHeight={rowHeight}
                                 rowWidth={rowWidth}
+                                onAddNew={onAddNew}
                             />
                         )}
                     />
                 )}
+                {/** Filter buttons for changing the view mode */}
                 <GanttViewModeButtons selectedMode={viewMode} onSelected={setViewMode} />
+
+                {/** Slide over opening the whole milestone */}
+                {milestoneToOpen && (
+                    <MilestoneSlideOver
+                        milestone={milestoneToOpen.milestone}
+                        isOpen={milestoneToOpen.isOpen}
+                        onClose={() => {
+                            setMilestoneToOpen((prev) => ({ ...prev, isOpen: false }));
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

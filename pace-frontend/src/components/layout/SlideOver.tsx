@@ -6,9 +6,10 @@ interface SlideOverProps {
     isOpen: boolean;
     onClose: () => void;
     title: string;
+    headerBackgroundColor?: string;
 }
 
-export const SlideOver: React.FC<SlideOverProps> = ({ isOpen, onClose, title, children }) => {
+export const SlideOver: React.FC<SlideOverProps> = ({ isOpen, onClose, title, headerBackgroundColor, children }) => {
     return (
         <Transition.Root show={isOpen} as={Fragment}>
             <Dialog as="div" className="fixed inset-0 overflow-hidden z-50" onClose={onClose}>
@@ -34,7 +35,7 @@ export const SlideOver: React.FC<SlideOverProps> = ({ isOpen, onClose, title, ch
                             leaveFrom="translate-x-0"
                             leaveTo="translate-x-full"
                         >
-                            <div className="relative w-screen max-w-lg">
+                            <div className="relative w-screen max-w-2xl">
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-in-out duration-500"
@@ -55,9 +56,16 @@ export const SlideOver: React.FC<SlideOverProps> = ({ isOpen, onClose, title, ch
                                         </button>
                                     </div>
                                 </Transition.Child>
-                                <div className="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll">
-                                    <div className="px-4 sm:px-6">
-                                        <Dialog.Title className="text-lg font-medium text-gray-900">
+                                <div className="h-full w-full flex flex-col pb-6 bg-white shadow-xl overflow-y-scroll">
+                                    <div
+                                        style={{ backgroundColor: headerBackgroundColor ?? '' }}
+                                        className="px-4 pt-6 pb-6 sm:px-6"
+                                    >
+                                        <Dialog.Title
+                                            className={`text-lg font-medium ${
+                                                headerBackgroundColor ? 'text-white' : 'text-gray-900'
+                                            }`}
+                                        >
                                             {title}
                                         </Dialog.Title>
                                     </div>

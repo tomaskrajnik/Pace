@@ -5,22 +5,16 @@ import NormalText from '../common/NormalText';
 export const MilestoneListTable: React.FC<{
     rowHeight: number;
     rowWidth: string;
-
     tasks: Task[];
     selectedTaskId: string;
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
-}> = ({ rowHeight, rowWidth, tasks, onExpanderClick }) => {
+    onMilestoneClick: (t: Task) => void;
+    onAddNew: () => void;
+}> = ({ rowHeight, rowWidth, tasks, onMilestoneClick, onAddNew }) => {
     return (
         <div>
             {tasks.map((t) => {
-                let expanderSymbol = '';
-                if (t.hideChildren === false) {
-                    expanderSymbol = '▼';
-                } else if (t.hideChildren === true) {
-                    expanderSymbol = '▶';
-                }
-
                 return (
                     <div
                         className="flex items-center pl-4 tr tr-border-right cursor-pointer"
@@ -35,21 +29,23 @@ export const MilestoneListTable: React.FC<{
                             title={t.name}
                         >
                             <div className="flex items-center">
-                                <div onClick={() => onExpanderClick(t)}>{expanderSymbol}</div>
-
                                 <div
                                     className="w-4 h-4 rounded mr-2"
                                     style={{ backgroundColor: t.styles?.backgroundColor }}
                                 ></div>
-                                <NormalText className="font-bold">{t.name}</NormalText>
+                                <div onClick={() => onMilestoneClick(t)}>
+                                    <NormalText className="font-bold hover:underline cursor-pointer">
+                                        {t.name}
+                                    </NormalText>
+                                </div>
                             </div>
                         </div>
                     </div>
                 );
             })}
-            <div className="py-2 pl-4">
-                <NormalText>Add new</NormalText>
-            </div>
+            <button onClick={onAddNew} className="py-2 pl-4">
+                <NormalText className="hover:underline cursor-pointer">+ Add new</NormalText>
+            </button>
         </div>
     );
 };

@@ -52,7 +52,7 @@ const ProjectMilestones: React.FC = ({}) => {
                     </div>
                 </div>
 
-                <GantChart />
+                <GantChart onAddNew={() => setCreateModalOpen(true)} />
             </div>
             <CreateMilestoneModal isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
         </>

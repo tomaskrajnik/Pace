@@ -4,12 +4,12 @@ import moment from 'moment';
 import { Milestone } from '../../../models/milestones.model';
 import { MilestoneListHeader } from '../../milestones/MilestoneListHeader';
 import { MilestoneListTable } from '../../milestones/MilestoneListTable';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { milestonesSelector } from '../../../store/milestones/milestones.selector';
-import { setMilestones } from '../../../store/milestones/milestones.actions';
 import { GanttViewModeButtons } from './GantViewModeButton';
 import { MilestoneToolTip } from '../../milestones/MilestoneToolTip';
 import { MilestoneSlideOver } from '../../milestones/MilestoneSlideOver';
+import MilestonesService from '../../../services/MilestonesService';
 
 interface GantChartProps {
     onAddNew: () => void;
@@ -24,7 +24,7 @@ export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
     });
 
     const milestones = useSelector(milestonesSelector);
-    const dispatch = useDispatch();
+
     const columnWidth = React.useMemo(() => {
         switch (viewMode) {
             case ViewMode.Day:
@@ -49,7 +49,6 @@ export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
                 start: moment(m.startDate).toDate(),
                 end: moment(m.endDate).toDate(),
                 progress: 10,
-                dependencies: [...m.subtasks],
                 isDisabled: false,
                 styles: { progressColor: m.color, backgroundColor: m.color, progressSelectedColor: m.color },
             } as Task);
@@ -57,12 +56,13 @@ export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
         return mappedtasks;
     };
 
-    const handleTaskChange = (task: Task) => {
+    const handleTaskChange = async (task: Task) => {
         if (!milestones) return;
-        const newMilestones: Milestone[] = milestones.map((m) =>
-            m.uid === task.id ? { ...m, startDate: task.start.getTime(), endDate: task.end.getTime() } : m,
-        );
-        dispatch(setMilestones(newMilestones));
+
+        const updateData: Partial<Milestone> = { startDate: task.start.getTime(), endDate: task.end.getTime() };
+        setTimeout(async () => {
+            await MilestonesService.updateMilestone(task.id, updateData);
+        }, 500);
     };
 
     const handleProgressChange = async (task: Task) => {

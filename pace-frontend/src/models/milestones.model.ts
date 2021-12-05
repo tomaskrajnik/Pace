@@ -12,6 +12,7 @@ export class Milestone {
     public endDate: number;
     public description?: string;
     public color: PaceColorsEnum | string;
+    public projectId: string;
 
     /**
      * class Milestone constructor
@@ -26,5 +27,6 @@ export class Milestone {
         this.endDate = milestoneConfig.endDate;
         this.description = milestoneConfig.description;
         this.color = milestoneConfig.color;
+        this.projectId = milestoneConfig.projectId;
     }
 }

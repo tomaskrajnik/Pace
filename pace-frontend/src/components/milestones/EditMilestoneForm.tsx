@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Milestone } from '../../models/milestones.model';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,6 +10,10 @@ import { CustomDatePicker } from '../../components/form/CustomDatePicker';
 import { PaceColorsEnum } from '../../utils/colors';
 import DatePicker from 'react-datepicker';
 import NormalButton from '../common/NormalButton';
+import { UpdateMilestoneRequest } from '../../services/MilestoneService.types';
+import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
+import MilestonesService from '../../services/MilestonesService';
 
 interface EditMilestoneFormProps {
     milestone: Milestone;
@@ -26,12 +30,16 @@ const schema = yup.object().shape({
 });
 
 export const EditMilestoneForm: React.FC<EditMilestoneFormProps> = ({ milestone, onEditModeExit }) => {
+    const { id: projectId } = useParams<{ id: string }>();
     const [startDate, setStartDate] = useState<Date>(new Date(milestone.startDate));
     const [endDate, setEndDate] = useState<Date>(new Date(milestone.endDate));
     const [color, setColor] = useState<string | PaceColorsEnum>(milestone.color);
+    const [loading, setLoading] = useState(false);
+
     const {
         control,
-        formState: { errors },
+        handleSubmit,
+        formState: { errors, isDirty },
     } = useForm<IFormInputs>({
         defaultValues: {
             name: milestone.name,
@@ -40,6 +48,37 @@ export const EditMilestoneForm: React.FC<EditMilestoneFormProps> = ({ milestone,
         mode: 'onSubmit',
         resolver: yupResolver(schema),
     });
+
+    const isFormDirty = useMemo(
+        () =>
+            isDirty ||
+            startDate.getTime() !== milestone.startDate ||
+            endDate.getTime() !== milestone.endDate ||
+            color !== milestone.color,
+        [isDirty, startDate, endDate, milestone, color],
+    );
+
+    const handleMilestoneUpdate = async (data: { name: string; description: string }) => {
+        const dataToUpdate: UpdateMilestoneRequest = {
+            startDate: startDate.getTime(),
+            endDate: endDate.getTime(),
+            color,
+            projectId,
+            ...data,
+        };
+
+        try {
+            setLoading(true);
+            await MilestonesService.updateMilestone(milestone.uid, dataToUpdate);
+            toast.success('Update successfull');
+        } catch (err) {
+            toast.error('Something went wrong');
+        } finally {
+            setLoading(false);
+            onEditModeExit?.();
+        }
+    };
+
     return (
         <div>
             <div className="bg-white rounded-lg pb-4 sm:pb-4">
@@ -110,7 +149,7 @@ export const EditMilestoneForm: React.FC<EditMilestoneFormProps> = ({ milestone,
                     {onEditModeExit && (
                         <div className="flex w-40 mr-2">
                             <NormalButton
-                                variant="secondary"
+                                variant="tertiary"
                                 className="shadow"
                                 title="Cancel"
                                 onClick={onEditModeExit}
@@ -118,7 +157,13 @@ export const EditMilestoneForm: React.FC<EditMilestoneFormProps> = ({ milestone,
                         </div>
                     )}
                     <div className="flex w-40">
-                        <NormalButton className="shadow" title="Save" onClick={() => null} />
+                        <NormalButton
+                            loading={loading}
+                            className="shadow"
+                            disabled={!isFormDirty}
+                            title="Save"
+                            onClick={handleSubmit(handleMilestoneUpdate)}
+                        />
                     </div>
                 </div>
             </div>

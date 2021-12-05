@@ -1,41 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import NormalText from '../../common/NormalText';
 import 'gantt-task-react/dist/index.css';
-import { Milestone } from '../../../models/milestones.model';
-import { PaceColorsEnum } from '../../../utils/colors';
 import { GantChart } from '../gantChart/GantChart';
-import { useDispatch } from 'react-redux';
-import { setMilestones } from '../../../store/milestones/milestones.actions';
 import NormalButton from '../../common/NormalButton';
 import { CreateMilestoneModal } from '../../milestones/CreateMilestoneModal';
-
-const _milestones: Milestone[] = [
-    {
-        uid: 'skanfskla',
-        startDate: new Date(2021, 8, 15).getTime(),
-        endDate: new Date(2021, 8, 25).getTime(),
-        createdAt: new Date(2021, 11, 22).getTime(),
-        name: 'Website changes',
-        color: PaceColorsEnum.GREEN_500,
-        subtasks: [],
-    },
-    {
-        uid: 'safafsdfs',
-        startDate: new Date(2022, 1, 17).getTime(),
-        endDate: new Date(2022, 3, 25).getTime(),
-        createdAt: new Date(2021, 11, 14).getTime(),
-        name: 'App improvements',
-        color: PaceColorsEnum.INDIGO_500,
-        subtasks: [],
-    },
-];
+import { useLoadingDebounce } from '../../../hooks/useLoadingDebounce';
+import { useSelector } from 'react-redux';
+import { milestonesLoadingSelector } from '../../../store/milestones/milestones.selector';
+import Skeleton from 'react-loading-skeleton';
 
 const ProjectMilestones: React.FC = ({}) => {
     const [createModalOpen, setCreateModalOpen] = useState(false);
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setMilestones(_milestones));
-    }, [_milestones]);
+    const milestonesLoading = useSelector(milestonesLoadingSelector);
+    const loading = useLoadingDebounce(milestonesLoading, 200);
 
     return (
         <>
@@ -51,8 +28,11 @@ const ProjectMilestones: React.FC = ({}) => {
                         />
                     </div>
                 </div>
-
-                <GantChart onAddNew={() => setCreateModalOpen(true)} />
+                {loading ? (
+                    <Skeleton style={{ borderRadius: '10px', marginTop: '20px' }} height={176} />
+                ) : (
+                    <GantChart onAddNew={() => setCreateModalOpen(true)} />
+                )}
             </div>
             <CreateMilestoneModal isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
         </>

@@ -74,7 +74,7 @@ const NormalButton: React.FC<NormalButtonProps> = ({
         ${className}
     `)}
             disabled={disabled}
-            type="button"
+            type={type}
             {...props}
         >
             {icon && (

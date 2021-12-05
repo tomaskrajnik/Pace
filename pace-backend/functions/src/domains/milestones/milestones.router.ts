@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateFirebaseIdToken } from "../../shared/middleware/auth.middleware";
 import { validateRequest, ValidationRouteTypes } from "../../utils/validation";
-import { createMilestone, deleteMilestone } from "./milestones.controller";
+import { createMilestone, deleteMilestone, updateMilestone } from "./milestones.controller";
 
 const milestonesRouter = Router();
 
@@ -39,7 +39,12 @@ milestonesRouter.post(
  * @param {Milestone.model} updateDate.body.required Patial Milestone model
  * @returns {boolean} 200 success
  */
-milestonesRouter.put("/update/:id", validateRequest(ValidationRouteTypes.UpdateMilestone), validateFirebaseIdToken);
+milestonesRouter.put(
+  "/update/:id",
+  validateRequest(ValidationRouteTypes.UpdateMilestone),
+  validateFirebaseIdToken,
+  updateMilestone
+);
 
 /**
  * Delete milestone

@@ -14,6 +14,8 @@ import ProjectMembers from '../../components/project/tabs/ProjectMembers';
 import AvatarGroup from '../../components/common/AvatarGroup';
 import NormalText from '../../components/common/NormalText';
 import { ProjectMemberRole } from '../../models/projects.model';
+import { useSubscribeToMilestonesForProject } from '../../hooks/useSubscribeToMilestonesForProject';
+import useDocumentTitle from '../../hooks/useDocTitle';
 
 interface ProjectPageTab {
     id: number;
@@ -28,6 +30,13 @@ const Project: React.FC = ({}) => {
     const userRole = useSelector((state: RootState) => projectUserRoleSelector(state, id));
     if (!project) return null;
 
+    // Set title
+    useDocumentTitle(`Pace - ${project.name} project`);
+
+    // Fire of listener for milestones
+    useSubscribeToMilestonesForProject(id);
+
+    // Tabs
     const [tabs] = useState<ProjectPageTab[]>([
         {
             id: 1,

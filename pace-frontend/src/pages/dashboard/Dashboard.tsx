@@ -13,18 +13,17 @@ import { CreateProjectModal } from '../../components/project/CreateProjectModal'
 import { useLoadingDebounce } from '../../hooks/useLoadingDebounce';
 import { invitationsSelector } from '../../store/invitations/invitations.selector';
 import { PendingInvitation } from '../../components/invitations/PendingInvitation';
+import useDocumentTitle from '../../hooks/useDocTitle';
 
 const Dashboard: React.FC = ({}) => {
+    useDocumentTitle('Pace - dashboard');
     const user = useSelector(userSelector);
     const projects = useSelector(projectsSelector);
     const projectsLoading = useSelector(projectsLoadingSelector);
     const invitations = useSelector(invitationsSelector);
     if (!user) return null;
-
     const [createProjectModalOpen, setCreateProjectModalOpen] = useState(false);
     const showLoader = useLoadingDebounce(projectsLoading);
-
-    console.log(projects);
 
     const renderContent = useCallback(() => {
         // Skeleton loader

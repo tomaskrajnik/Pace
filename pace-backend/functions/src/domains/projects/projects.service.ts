@@ -162,7 +162,7 @@ class ProjectService {
       });
       return { error: "Project with provided id does not exist" };
     }
-    const userHasPermission = await projectService.userHasPermissionToManipulateProject(userId, project);
+    const userHasPermission = await this.userHasPermissionToManipulateProject(userId, project);
     if (!userHasPermission) {
       paceLoggingService.error("Validate user has project permission - user does not have permission", {
         data: { userId, project },

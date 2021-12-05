@@ -12,11 +12,11 @@ import { CustomDatePicker } from '../../components/form/CustomDatePicker';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ColorSelector } from '../form/ColorSelector';
-import { Milestone } from '../../models/milestones.model';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { milestonesSelector } from '../../store/milestones/milestones.selector';
-import { setMilestones } from '../../store/milestones/milestones.actions';
-import { nanoid } from 'nanoid';
+import MilestonesService from '../../services/MilestonesService';
+import { useParams } from 'react-router';
+import { CreateMilestoneRequest } from '../../services/MilestoneService.types';
 
 interface CreateMilestoneModalProps {
     isOpen: boolean;
@@ -33,13 +33,16 @@ const schema = yup.object().shape({
 });
 
 export const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({ onClose, isOpen }) => {
+    const { id: projectId } = useParams<{ id: string }>();
     const cancelButtonRef = useRef(null);
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [loading, setLoading] = useState(false);
     const [color, setColor] = useState<string | PaceColorsEnum>(PaceColorsEnum.BLUE_400);
     const milestones = useSelector(milestonesSelector);
-    const dispatch = useDispatch();
+
+    if (!projectId) return null;
+
     const {
         control,
         handleSubmit,
@@ -57,21 +60,22 @@ export const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({ onCl
 
     const handleMilestoneCreate = async (data: { name: string; description: string }) => {
         if (!milestones) return;
-        const milestone: Milestone = {
-            uid: nanoid(),
-            ...data,
+
+        const milestone: CreateMilestoneRequest = {
             startDate: startDate.getTime(),
             endDate: endDate.getTime(),
             color,
-            subtasks: [],
-            createdAt: Date.now(),
+            projectId,
+            ...data,
         };
         try {
             setLoading(true);
-            dispatch(setMilestones([...milestones, milestone]));
+            await MilestonesService.createMilestone(milestone);
+            toast.success('Milestone sucessfully created');
         } catch (err) {
             toast.error('Something went wrong');
         } finally {
+            setLoading(false);
             onClose();
         }
     };

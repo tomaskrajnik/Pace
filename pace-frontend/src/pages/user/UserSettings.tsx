@@ -15,6 +15,7 @@ import ProfilePicture from '../../components/common/ProfilePicture';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { useFirebaseStorage } from '../../hooks/firebase/useFirebaseStorage';
 import { toast } from 'react-toastify';
+import useDocumentTitle from '../../hooks/useDocTitle';
 
 interface IFormInputs {
     name: string;
@@ -34,6 +35,8 @@ const UserSettings: React.FC = ({}) => {
     if (!user) return null;
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState([]);
+
+    useDocumentTitle(`Pace - ${user.name}`);
 
     const {
         control,

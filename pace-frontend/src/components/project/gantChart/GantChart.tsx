@@ -60,9 +60,8 @@ export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
         if (!milestones) return;
 
         const updateData: Partial<Milestone> = { startDate: task.start.getTime(), endDate: task.end.getTime() };
-        setTimeout(async () => {
-            await MilestonesService.updateMilestone(task.id, updateData);
-        }, 500);
+
+        await MilestonesService.updateMilestone(task.id, updateData);
     };
 
     const handleProgressChange = async (task: Task) => {

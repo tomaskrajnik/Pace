@@ -13,6 +13,7 @@ import ResetPassword from '../pages/resetPassword/ResetPassword';
 import UserSettings from '../pages/user/UserSettings';
 import UserService from '../services/UserService';
 import Project from '../pages/project/Project';
+import { Milestone } from '../pages/milestone/Milestone';
 
 const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated }) => {
     useEffect(() => {
@@ -31,6 +32,11 @@ const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated })
                 <AuthRoute authenticated={authenticated} path={AuthRoutes.Dashboard} component={Dashboard} />
                 <AuthRoute authenticated={authenticated} path={AuthRoutes.UserSettings} component={UserSettings} />
                 <AuthRoute authenticated={authenticated} path={`${AuthRoutes.Project}/:id`} component={Project} />
+                <AuthRoute
+                    authenticated={authenticated}
+                    path={`${AuthRoutes.Project}/:projectId${AuthRoutes.Milestone}/:milestoneId`}
+                    component={Milestone}
+                />
             </>
         </Switch>
     );

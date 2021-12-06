@@ -1,7 +1,9 @@
 import { CalendarIcon, PencilAltIcon, TrashIcon } from '@heroicons/react/solid';
 import moment from 'moment';
 import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Milestone } from '../../models/milestones.model';
+import { AuthRoutes } from '../../routes/routes.types';
 import NormalText from '../common/NormalText';
 
 interface PreviewMilestoneProps {
@@ -11,13 +13,16 @@ interface PreviewMilestoneProps {
 }
 
 export const PreviewMilestone: React.FC<PreviewMilestoneProps> = ({ milestone, onEditPressed, onDeletePressed }) => {
+    const { id: projectId } = useParams<{ id: string }>();
     return (
         <div className="bg-white rounded-lg pb-4 sm:pb-4">
             <div className="col-span-3 mt-3 sm:col-span-2">
                 <div className="flex justify-between">
                     <div className="flex items-center">
                         <div className="w-5 h-5 rounded-md mr-2" style={{ backgroundColor: milestone.color }}></div>
-                        <NormalText className="text-2xl">{milestone.name}</NormalText>
+                        <Link to={`${AuthRoutes.Project}/${projectId}${AuthRoutes.Milestone}/${milestone.uid}}`}>
+                            <NormalText className="text-2xl hover:underline">{milestone.name}</NormalText>
+                        </Link>
                     </div>
                     <div className="flex">
                         {onEditPressed && (

@@ -18,7 +18,9 @@ const ProjectMembers: React.FC = () => {
         <>
             <ProjectMembersTable project={project} user={user} userRole={userRole} />
 
-            {project.invitations.length && <PendingInvitationTable invitationsIds={project.invitations} />}
+            {project.invitations && project.invitations.length !== 0 && (
+                <PendingInvitationTable invitationsIds={project.invitations} />
+            )}
         </>
     );
 };

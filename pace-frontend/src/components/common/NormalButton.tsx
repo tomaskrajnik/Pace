@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { prettyClasses } from '../../utils/formatting';
 import DynamicHeroIcon, { IconName } from './DynamicHeroIcon';
 import Lottie from 'react-lottie';
@@ -48,12 +48,19 @@ const NormalButton: React.FC<NormalButtonProps> = ({
     ...props
 }) => {
     // Tinting the colors for secondary variant
-    const colorClasses =
-        variant === 'primary'
-            ? `text-white bg-${color}-500 hover:bg-${color}-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${color}-500`
-            : `text-sm text-${color}-500 font-medium rounded-md text-white bg-${
-                  variant === 'secondary' ? color : 'white '
-              }-100 hover:bg-${color}-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${color}-300`;
+
+    const colorClasses = useMemo(
+        () =>
+            variant === 'primary'
+                ? `text-white bg-${color}-500 hover:bg-${color}-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${color}-500`
+                : `text-sm text-${color}-500 font-medium rounded-md text-white bg-${
+                      variant === 'secondary' ? color : 'white'
+                  }-100 hover:bg-${color}-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${color}-300`,
+        [variant, color],
+    );
+
+    const iconPosition = useMemo(() => icon && `${icon.position === 'left' ? 'left' : 'right'}-5`, [icon]);
+
     const loader = require(`../../assets/lottie/default-loader-${variant == 'primary' ? 'white' : color}.json`);
 
     const defaultOptions = {
@@ -74,15 +81,11 @@ const NormalButton: React.FC<NormalButtonProps> = ({
         ${className}
     `)}
             disabled={disabled}
-            type="button"
+            type={type}
             {...props}
         >
             {icon && (
-                <span
-                    className={`absolute ${
-                        icon.position === 'left' ? 'left' : 'right'
-                    }-5 inset-y-0 flex items-center pl-3`}
-                >
+                <span className={`absolute ${iconPosition} inset-y-0 flex items-center pl-3`}>
                     <DynamicHeroIcon
                         icon={icon.name}
                         className={`h-4 w-5 text-${variant === 'primary' ? 'white' : `${color}-500`} group-hover:text-${

@@ -14,7 +14,6 @@ const NonAuthRouteProps: React.FC<NonAuthRouteProps & RouteProps> = ({
 }) => {
     return (
         <Route
-            exact
             {...rest}
             render={(props) =>
                 !authenticated ? <Component {...props} /> : <Redirect to={{ pathname: AuthRoutes.Dashboard }} />

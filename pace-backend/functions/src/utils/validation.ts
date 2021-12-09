@@ -9,6 +9,8 @@ export const enum ValidationRouteTypes {
   CreateProject = "createProject",
   UpdateProject = "updateProject",
   InviteUser = "inviteUser",
+  CreateMilestone = "createMilestone",
+  UpdateMilestone = "updateMilestone",
 }
 
 export const validateRequest = (route: ValidationRouteTypes) => {
@@ -62,6 +64,25 @@ export const validateRequest = (route: ValidationRouteTypes) => {
     }
     case ValidationRouteTypes.InviteUser: {
       return [body("email").isEmail(), body("role").isIn(["owner", "editor", "viewer"]).isString()];
+    }
+    case ValidationRouteTypes.CreateMilestone: {
+      return [
+        body("name", "name does not exists").isString(),
+        body("projectId").not().isEmpty().withMessage("Project uid cannot be empty"),
+        body("description", "description does not exists").isString(),
+        body("color", "color does not exists").isString(),
+        body("startDate", "startDate does not exists").isNumeric(),
+        body("endDate", "endDate does not exists").isNumeric(),
+      ];
+    }
+    case ValidationRouteTypes.UpdateMilestone: {
+      return [
+        body("name", "name does not exists").optional().isString(),
+        body("description", "description does not exists").optional().isString(),
+        body("color", "color does not exists").optional().isString(),
+        body("startDate", "startDate does not exists").optional().isNumeric(),
+        body("endDate", "endDate does not exists").optional().isNumeric(),
+      ];
     }
   }
 };

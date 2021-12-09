@@ -1,0 +1,16 @@
+export enum PaceColorsEnum {
+    RED_400 = '#F87171',
+    RED_500 = '#EF4444',
+    YELLOW_400 = '#FBBF24',
+    YELLOW_500 = '#F59E0B',
+    GREEN_400 = '#34D399',
+    GREEN_500 = '#10B981',
+    BLUE_400 = '#60A5FA',
+    BLUE_500 = '#3B82F6',
+    INDIGO_400 = '#818CF8',
+    INDIGO_500 = '#6366F1',
+    PURPLE_400 = '#A78BFA',
+    PURPLE_500 = '#8B5CF6',
+    PINK_400 = '#F472B6',
+    PINK_500 = '#EC4899',
+}

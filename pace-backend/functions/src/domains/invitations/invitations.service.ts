@@ -7,7 +7,7 @@ import { Project, ProjectMemberRole } from "../projects/projects.model";
 import { projectService } from "../projects/projects.service";
 import { User } from "../users/users.model";
 import { userService } from "../users/users.service";
-import { Invivation } from "./invitations.model";
+import { Invitation } from "./invitations.model";
 
 class InvitationService {
   private static instance: InvitationService;
@@ -59,7 +59,7 @@ class InvitationService {
       }
     }
 
-    const invitation: Omit<Invivation, "uid"> = {
+    const invitation: Omit<Invitation, "uid"> = {
       projectId,
       email,
       role,
@@ -148,7 +148,7 @@ class InvitationService {
    * @param data
    * @returns {boolean}
    */
-  public async updateInvitation(invitationId: string, data: Partial<Invivation> = {}) {
+  public async updateInvitation(invitationId: string, data: Partial<Invitation> = {}) {
     paceLoggingService.log(
       `${InvitationService.name}.${this.updateInvitation.name} Updating invitation ${invitationId}`,
       data
@@ -199,7 +199,7 @@ class InvitationService {
    */
   public async getInvitationsForUser(email: string) {
     const snapshot = await db.collection(databaseCollections.INVITATIONS).where("email", "==", email).get();
-    return firebaseHelper.docsToObjects(snapshot.docs) as Invivation[];
+    return firebaseHelper.docsToObjects(snapshot.docs) as Invitation[];
   }
 
   /**
@@ -234,7 +234,7 @@ class InvitationService {
       paceLoggingService.error(JSON.stringify(err));
     }
     const invitation = doc?.data();
-    return invitation ? ({ uid, ...invitation } as Invivation) : null;
+    return invitation ? ({ uid, ...invitation } as Invitation) : null;
   }
 }
 

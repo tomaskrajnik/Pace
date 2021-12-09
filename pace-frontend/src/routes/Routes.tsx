@@ -13,6 +13,8 @@ import ResetPassword from '../pages/resetPassword/ResetPassword';
 import UserSettings from '../pages/user/UserSettings';
 import UserService from '../services/UserService';
 import Project from '../pages/project/Project';
+import { Milestone } from '../pages/milestone/Milestone';
+import NotFound from '../pages/not-found/NotFound';
 
 const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated }) => {
     useEffect(() => {
@@ -20,18 +22,19 @@ const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated })
     }, [authenticated]);
     return (
         <Switch>
-            <>
-                <NonAuthRoute authenticated={authenticated} path={NonAuthRoutes.Signup} component={Signup} />
-                <NonAuthRoute authenticated={authenticated} path={NonAuthRoutes.Login} component={Login} />
-                <NonAuthRoute
-                    authenticated={authenticated}
-                    path={NonAuthRoutes.ResetPassword}
-                    component={ResetPassword}
-                />
-                <AuthRoute authenticated={authenticated} path={AuthRoutes.Dashboard} component={Dashboard} />
-                <AuthRoute authenticated={authenticated} path={AuthRoutes.UserSettings} component={UserSettings} />
-                <AuthRoute authenticated={authenticated} path={`${AuthRoutes.Project}/:id`} component={Project} />
-            </>
+            <NonAuthRoute authenticated={authenticated} exact path={NonAuthRoutes.Signup} component={Signup} />
+            <NonAuthRoute authenticated={authenticated} exact path={NonAuthRoutes.Login} component={Login} />
+            <NonAuthRoute authenticated={authenticated} path={NonAuthRoutes.ResetPassword} component={ResetPassword} />
+            <AuthRoute authenticated={authenticated} exact path={AuthRoutes.Dashboard} component={Dashboard} />
+            <AuthRoute authenticated={authenticated} exact path={AuthRoutes.UserSettings} component={UserSettings} />
+            <AuthRoute authenticated={authenticated} exact path={`${AuthRoutes.Project}/:id`} component={Project} />
+            <AuthRoute
+                authenticated={authenticated}
+                exact
+                path={`${AuthRoutes.Project}/:projectId${AuthRoutes.Milestone}/:milestoneId`}
+                component={Milestone}
+            />
+            <AuthRoute authenticated={authenticated} component={NotFound} />
         </Switch>
     );
 };

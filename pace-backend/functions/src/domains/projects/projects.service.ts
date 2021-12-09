@@ -4,7 +4,8 @@ import { db } from "../../shared/database/admin";
 import { databaseCollections } from "../../shared/enums/database-collections.enum";
 import { firebaseHelper } from "../../shared/services/firebase-helper.service";
 import { paceLoggingService } from "../../utils/services/logger";
-import { Invivation } from "../invitations/invitations.model";
+import { Invitation } from "../invitations/invitations.model";
+import { Milestone } from "../milestones/milestones.model";
 import { User } from "../users/users.model";
 import { userService } from "../users/users.service";
 import { Project, ProjectMember, ProjectMemberRole } from "./projects.model";
@@ -85,7 +86,7 @@ class ProjectService {
   /**
    * Find project by uid in Firestore
    * @param {string} uid Project id
-   * @return {Promise<admin.auth.UserRecord>}
+   * @return {Promise<Project>}
    */
   public async findProjectInFirestore(uid: string) {
     paceLoggingService.log(`${ProjectService.name}.${this.findProjectInFirestore.name} Getting firestore project`, {
@@ -119,8 +120,8 @@ class ProjectService {
 
   /**
    * Update the project
-   * @param projectId
-   * @param data
+   * @param {string} projectId
+   * @param {Partial<Project>} data
    * @returns {boolean}
    */
   public async updateProject(projectId: string, data: Partial<Project> = {}) {
@@ -161,7 +162,7 @@ class ProjectService {
       });
       return { error: "Project with provided id does not exist" };
     }
-    const userHasPermission = await projectService.userHasPermissionToManipulateProject(userId, project);
+    const userHasPermission = await this.userHasPermissionToManipulateProject(userId, project);
     if (!userHasPermission) {
       paceLoggingService.error("Validate user has project permission - user does not have permission", {
         data: { userId, project },
@@ -172,6 +173,7 @@ class ProjectService {
     }
     return { project };
   }
+
   /**
    * Update invitations in project after inviting project memer
    * @param snapshot
@@ -179,7 +181,7 @@ class ProjectService {
    */
   async updateInvitations(snapshot: any, context: any) {
     const invitationId = snapshot.id;
-    const data: Omit<Invivation, "uid"> = snapshot.data();
+    const data: Omit<Invitation, "uid"> = snapshot.data();
     const project = await this.findProjectInFirestore(data.projectId);
     if (!project) {
       return paceLoggingService.error("Project not found while updating invitations", { invitationId });
@@ -273,8 +275,11 @@ class ProjectService {
     }
 
     if (member.role === ProjectMemberRole.OWNER) {
-      // Delete project if the owner removes it
-      return await this.deleteProject(projectId);
+      const projectOwners = project.members.filter((m) => m.role === ProjectMemberRole.OWNER);
+      if (projectOwners.length === 1) {
+        // Delete project if single owner removes it
+        return await this.deleteProject(projectId);
+      }
     }
 
     const updatedMembers = project.members.filter((m) => m.uid !== userId);
@@ -306,6 +311,36 @@ class ProjectService {
     const projects = firebaseHelper.docsToObjects(snapshot.docs);
 
     return projects ? projects : null;
+  }
+
+  /**
+   * Automatically updates milestones in project on milestone create or delete
+   * @param userId
+   * @param role
+   * @returns
+   */
+  public async updateMilestonesInProject(snapshot: any, context: any): Promise<void> {
+    const milestoneId = snapshot.id;
+    const { projectId } = snapshot.data() as Milestone;
+    const project = await this.findProjectInFirestore(projectId);
+    if (!project) return;
+    let milestones: string[] = [];
+    if (project.milestones.includes(milestoneId)) {
+      // Means we have to delete it from project
+      paceLoggingService.log(
+        `${ProjectService.name}.${projectService.updateMilestonesInProject.name}: Removing milestone from project`,
+        { milestoneId }
+      );
+      milestones = project.milestones.filter((m) => m !== milestoneId);
+    } else {
+      // Means we have to add it to the project
+      paceLoggingService.log(
+        `${ProjectService.name}.${projectService.updateMilestonesInProject.name}: Adding milestone from project`,
+        { milestoneId }
+      );
+      milestones = [...project.milestones, milestoneId];
+    }
+    await this.updateProject(project.uid, { milestones });
   }
 
   /**

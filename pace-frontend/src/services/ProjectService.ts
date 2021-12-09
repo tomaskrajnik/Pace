@@ -67,7 +67,7 @@ class ProjectService {
     }
 
     /**
-     * Invite project member
+     * Create project
      * @param {CreateProjectRequest} data
      * @returns
      */

@@ -15,6 +15,7 @@ import ProfilePicture from '../../components/common/ProfilePicture';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { useFirebaseStorage } from '../../hooks/firebase/useFirebaseStorage';
 import { toast } from 'react-toastify';
+import useDocumentTitle from '../../hooks/useDocTitle';
 
 interface IFormInputs {
     name: string;
@@ -34,6 +35,8 @@ const UserSettings: React.FC = ({}) => {
     if (!user) return null;
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState([]);
+
+    useDocumentTitle(`Pace - ${user.name}`);
 
     const {
         control,
@@ -79,7 +82,7 @@ const UserSettings: React.FC = ({}) => {
 
     return (
         <Screen backgroundColorClass="md:bg-gray-100">
-            <div className="xs:px-2 md:py-10 sm:py-8">
+            <div className="md:py-10 sm:py-8">
                 <div className="md:grid md:grid-cols-3 md:gap-6">
                     <div className="md:col-span-1">
                         <div className="md:px-4 sm:px-0">
@@ -89,10 +92,10 @@ const UserSettings: React.FC = ({}) => {
                             </NormalText>
                         </div>
                     </div>
-                    <div className="mt-5 md:mt-0 md:col-span-2">
+                    <div className="sm:mt-5 md:mt-0 md:col-span-2">
                         <form action="#" method="POST">
                             <div className="md:shadow sm:rounded-md sm:overflow-hidden">
-                                <div className="md:px-4 py-5 bg-white space-y-6 sm:p-6">
+                                <div className="md:px-4 py-5 sm:bg-white space-y-6 sm:p-6">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700">Photo</label>
                                         <div className="mt-1 flex items-center pt-2">

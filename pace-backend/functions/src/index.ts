@@ -13,3 +13,4 @@ export const api = functions.region("europe-west1").https.onRequest(app);
 export * from "./domains/users/users.event-handlers";
 export * from "./domains/projects/projects.event-handlers";
 export * from "./domains/invitations/invitations.event-handlers";
+export * from "./domains/milestones/milestones.event-handlers";

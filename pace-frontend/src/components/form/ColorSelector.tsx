@@ -11,7 +11,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ selected, onSelect
     return (
         <Listbox value={selected} onChange={onSelected}>
             <div className="relative">
-                <Listbox.Button className="relative mt-1 rounded cursor-pointer">
+                <Listbox.Button className="relative mt-1 outline-none rounded cursor-pointer">
                     <div style={{ backgroundColor: selected }} className="w-6 h-6 rounded-md mr-2"></div>
                 </Listbox.Button>
                 <Transition

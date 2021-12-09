@@ -131,11 +131,11 @@ const ProjectSettings: React.FC = ({}) => {
                         </div>
                     </div>
                     <div className="md:col-span-2">
-                        <div className="shadow  overflow-hidden bg-white border border-gray-200 sm:rounded-lg">
-                            <div className="p-2">
+                        <div className="shadow mt-4 sm:mt-0 overflow-hidden bg-white border border-gray-200 rounded-lg">
+                            <div className="p-4 sm:p-2">
                                 <form action="#" method="POST">
                                     <div>
-                                        <div className="md:px-4 py-5 bg-white space-y-6 sm:p-6">
+                                        <div className="md:px-4 sm:py-5 bg-white space-y-6 sm:p-6">
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700">Photo</label>
                                                 <div className="mt-1 flex items-center pt-2">
@@ -161,8 +161,8 @@ const ProjectSettings: React.FC = ({}) => {
                                                     </ImageUploading>
                                                 </div>
                                             </div>
-                                            <div className="grid grid-cols-3 gap-6">
-                                                <div className="col-span-2s sm:col-span-2">
+                                            <div className="sm:grid sm:grid-cols-3 gap-6">
+                                                <div className="sm:col-span-2s sm:col-span-2">
                                                     <Controller
                                                         name="name"
                                                         control={control}
@@ -200,15 +200,15 @@ const ProjectSettings: React.FC = ({}) => {
                             </div>
                         </div>
                         <NormalText className="mt-8 text-lg">Danger zone</NormalText>
-                        <div className="shadow md:col-span-2 mt-4 overflow-hidden bg-white border border-red-200 sm:rounded-lg">
-                            <div className="flex justify-between px-4 py-4">
+                        <div className="shadow md:col-span-2 mt-4 overflow-hidden bg-white border border-red-200 rounded-lg">
+                            <div className=" flex-col sm:flex-row sm:justify-between px-4 py-4">
                                 <div>
                                     <NormalText className="font-bold text-red-500">Leave project</NormalText>
                                     <NormalText>
                                         If a ownner leaves the project. The whole project will be deleted
                                     </NormalText>
                                 </div>
-                                <div className="w-30">
+                                <div className="inline-block mt-2 sm:mt-0 w-30">
                                     <NormalButton
                                         className="shadow"
                                         title="Leave Project"
@@ -217,14 +217,14 @@ const ProjectSettings: React.FC = ({}) => {
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-between px-4 border-t border-red-200 py-4">
+                            <div className="flex-col sm:flex-row justify-between px-4 border-t border-red-200 py-4">
                                 <div>
                                     <NormalText className="font-bold text-red-500">Delete project</NormalText>
                                     <NormalText>
                                         Once you delete a project, there is no going back. Please be certain.
                                     </NormalText>
                                 </div>
-                                <div className="w-30">
+                                <div className="inline-block mt-2 sm:mt-0 w-30">
                                     <NormalButton
                                         disabled={userRole === ProjectMemberRole.EDITOR}
                                         className="shadow"

@@ -1,7 +1,7 @@
 import { Tab } from '@headlessui/react';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router';
+import { Redirect, useParams } from 'react-router';
 import NormalHeader from '../../components/common/NormalHeader';
 import { classNames } from '../../utils/formatting';
 import Screen from '../../components/layout/Screen';
@@ -16,6 +16,9 @@ import NormalText from '../../components/common/NormalText';
 import { ProjectMemberRole } from '../../models/projects.model';
 import { useSubscribeToMilestonesForProject } from '../../hooks/useSubscribeToMilestonesForProject';
 import useDocumentTitle from '../../hooks/useDocTitle';
+import { AuthRoutes } from '../../routes/routes.types';
+import { Breadcrumbs } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 interface ProjectPageTab {
     id: number;
@@ -28,7 +31,7 @@ const Project: React.FC = ({}) => {
     const { id } = useParams<{ id: string }>();
     const project = useSelector((state: RootState) => projectByIdSelector(state, id));
     const userRole = useSelector((state: RootState) => projectUserRoleSelector(state, id));
-    if (!project) return null;
+    if (!project) return <Redirect to={AuthRoutes.NotFound} />;
 
     // Set title
     useDocumentTitle(`Pace - ${project.name} project`);
@@ -60,6 +63,15 @@ const Project: React.FC = ({}) => {
 
     return (
         <Screen>
+            <div role="presentation" className="mb-4" onClick={(e) => e.preventDefault()}>
+                <Breadcrumbs separator="›" aria-label="breadcrumb">
+                    <Link to={`${AuthRoutes.Dashboard}`}>
+                        <NormalText className="hover:underline text-white">Projects</NormalText>
+                    </Link>
+
+                    <NormalText>{project.name}</NormalText>
+                </Breadcrumbs>
+            </div>
             <div className="flex items-center">
                 {project.photoUrl && (
                     <img className="h-12 w-12 ml-0.5 mr-3 rounded-full" src={project.photoUrl} alt={project.name} />
@@ -72,7 +84,7 @@ const Project: React.FC = ({}) => {
             </div>
             <div className="w-full  px-2 mt-6 sm:px-0">
                 <Tab.Group>
-                    <Tab.List className="flex max-w-2xl p-1 space-x-1 bg-gray-100 rounded-xl">
+                    <Tab.List className="flex sm:max-w-2xl p-1 space-x-1 sm:bg-gray-100 rounded-xl">
                         {tabs.map((tab) => {
                             if (tab.id === 2 && userRole === ProjectMemberRole.VIEWER) return null;
                             return (
@@ -81,7 +93,7 @@ const Project: React.FC = ({}) => {
                                     className={({ selected }) =>
                                         classNames(
                                             'w-full py-2.5 text-sm leading-5 font-medium  rounded-lg',
-                                            'focus:outline-none ',
+                                            'focus:outline-none outline-none',
                                             selected ? ' bg-white shadow' : 'hover:bg-blue/[0.60] text-gray-700',
                                         )
                                     }

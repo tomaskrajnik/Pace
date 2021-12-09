@@ -61,7 +61,7 @@ const Dashboard: React.FC = ({}) => {
                 </div>
 
                 {invitations && invitations?.length !== 0 && <PendingInvitation invitation={invitations[0]} />}
-                <div className="grid gap-4 md:grid-cols-4 sm:grid-cols-1 md:mt-8">{renderContent()}</div>
+                <div className="grid gap-4 md:grid-cols-4 sm:grid-cols-1 mt-8">{renderContent()}</div>
             </div>
             <CreateProjectModal isOpen={createProjectModalOpen} onClose={() => setCreateProjectModalOpen(false)} />
         </Screen>

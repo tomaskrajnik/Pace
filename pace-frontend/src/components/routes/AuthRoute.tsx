@@ -9,9 +9,9 @@ interface AuthRouteProps {
 }
 
 const AuthRoute: React.FC<AuthRouteProps & RouteProps> = ({ component: Component, authenticated, ...rest }) => {
+    console.log(rest);
     return (
         <Route
-            exact
             {...rest}
             render={(props) =>
                 authenticated ? (

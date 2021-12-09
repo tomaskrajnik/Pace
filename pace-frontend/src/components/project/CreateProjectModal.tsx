@@ -81,7 +81,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose,
                 initialFocus={cancelButtonRef}
                 onClose={onClose}
             >
-                <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div className="flex p-0 items-end justify-center min-h-screen sm:pt-4 sm:px-4 sm:pb-20 text-center sm:block ">
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -107,8 +107,8 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose,
                         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
-                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div className="w-full absolute bottom-0 pb-0 sm:relative align-bottom flex flex-col sm:inline-block mt-64 sm:mt-0 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:align-middle ">
+                            <div className="bg-white mb-16 sm:mb-0 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <NormalText className="text-lg">Create project</NormalText>
                                 <div className="col-span-3 mt-3 sm:col-span-2">
                                     <Controller
@@ -159,8 +159,8 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose,
                                     </ImageUploading>
                                 </div>
                             </div>
-                            <div className="bg-gray-50 px-4 py-3 sm:px-6 flex justify-end">
-                                <div className="sm:flex sm:flex-row w-60 self-end">
+                            <div className="sm:bg-gray-50 mt-24 sm:mt-0 mt-auto align-bottom px-4 py-3 sm:px-6 flex justify-end">
+                                <div className="flex flex-row w-60 sm:self-end">
                                     <NormalButton
                                         className="mr-2"
                                         title="Cancel"

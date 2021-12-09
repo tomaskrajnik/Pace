@@ -10,6 +10,8 @@ import { GanttViewModeButtons } from './GantViewModeButton';
 import { MilestoneToolTip } from '../../milestones/MilestoneToolTip';
 import { MilestoneSlideOver } from '../../milestones/MilestoneSlideOver';
 import MilestonesService from '../../../services/MilestonesService';
+import NormalText from '../../common/NormalText';
+import NormalButton from '../../common/NormalButton';
 
 interface GantChartProps {
     onAddNew: () => void;
@@ -86,8 +88,8 @@ export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
 
     return (
         <div>
-            <div className="mt-8 overflow-hidden shadow border-b border-gray-200 sm:rounded-lg relative">
-                {tasks.length !== 0 && (
+            <div className="mt-8 shadow overflow-hidden bg-white border border-gray-200 overflow-x-scroll rounded-lg relative">
+                {tasks.length !== 0 ? (
                     <Gantt
                         onDateChange={handleTaskChange}
                         onProgressChange={handleProgressChange}
@@ -126,9 +128,19 @@ export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
                             />
                         )}
                     />
+                ) : (
+                    <div className="h-48  flex items-center justify-center">
+                        <div className="flex flex-col ">
+                            <NormalText>You don't have any milestones yet</NormalText>
+                            <div className="w-32 mt-6 self-center">
+                                <NormalButton title="Add new" onClick={onAddNew} variant="primary" />
+                            </div>
+                        </div>
+                    </div>
                 )}
+
                 {/** Filter buttons for changing the view mode */}
-                <GanttViewModeButtons selectedMode={viewMode} onSelected={setViewMode} />
+                {milestones.length !== 0 && <GanttViewModeButtons selectedMode={viewMode} onSelected={setViewMode} />}
 
                 {/** Slide over opening the whole milestone */}
                 {milestoneToOpen && (

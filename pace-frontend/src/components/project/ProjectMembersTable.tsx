@@ -57,8 +57,8 @@ export const ProjectMembersTable: React.FC<ProjectMembersRoleTableProps> = ({ pr
                 <div className="flex flex-col">
                     <div className="-my-2 sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                            <div className="shadow overflow-hidden  border-b border-gray-200 sm:rounded-lg">
-                                <table className="min-w-full divide-y divide-gray-200">
+                            <div className="shadow overflow-x-scroll bg-white border border-gray-200 rounded-lg relative">
+                                <table className="min-w-full  divide-y divide-gray-200">
                                     <thead className="bg-white">
                                         <tr>
                                             <th

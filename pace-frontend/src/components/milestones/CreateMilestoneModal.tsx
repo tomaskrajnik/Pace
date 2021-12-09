@@ -109,7 +109,7 @@ export const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({ onCl
                         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
-                        <div className="inline-block align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div className="w-full absolute bottom-0 pb-0 sm:relative align-bottom flex flex-col sm:inline-block mt-64 sm:mt-0 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:align-middle">
                             <div className="bg-white rounded-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div className="flex items-center">
                                     <ColorSelector selected={color} onSelected={(col) => setColor(col)} />
@@ -134,7 +134,7 @@ export const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({ onCl
                                     />
                                     <NormalText className="text-red-500 mt-1">{errors.name?.message}</NormalText>
                                 </div>
-                                <div className="col-span-3 justify-between flex mt-3 sm:col-span-2">
+                                <div className="col-span-3 justify-between flex flex-col sm:flex-row mt-3 sm:col-span-2">
                                     <div>
                                         <NormalText>Start date:</NormalText>
                                         <DatePicker
@@ -175,8 +175,8 @@ export const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({ onCl
                                     />
                                 </div>
                             </div>
-                            <div className="bg-gray-50 px-4 py-3 rounded-b-lg sm:px-6 flex justify-end">
-                                <div className="sm:flex sm:flex-row w-60 self-end">
+                            <div className="sm:bg-gray-50 px-4 py-3 rounded-b-lg sm:px-6 flex justify-end">
+                                <div className="flex flex-row w-60 self-end">
                                     <NormalButton
                                         className="mr-2"
                                         title="Cancel"

@@ -8,6 +8,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import AuthService from '../../services/AuthService';
 import NormalButton from '../../components/common/NormalButton';
+import { NonAuthRoutes } from '../../routes/routes.types';
+import { Link } from 'react-router-dom';
 
 interface IFormInputs {
     email: string;
@@ -34,7 +36,7 @@ const ResetPassword: React.FC = () => {
         try {
             setLoading(true);
             const response = await AuthService.requestPasswordReset(data.email);
-            if (response.success) return setApiSuccess(`Email successfully sent to ${data.email}`);
+            if (response.success) return setApiSuccess(`Email successfully sent to ${data.email}.`);
         } catch (err: any) {
             setApiError(err.message);
         } finally {
@@ -45,7 +47,9 @@ const ResetPassword: React.FC = () => {
         <Screen withoutopPadding>
             <div className="min-h-full flex justify-center py-10 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full">
-                    <img className="mx-auto h-5 w-auto" src={paceLogo} alt="Pace Logo" />
+                    <Link to={NonAuthRoutes.Login}>
+                        <img className="mx-auto h-5 w-auto" src={paceLogo} alt="Pace Logo" />
+                    </Link>
                     <div className="h-100 py-28">
                         <form className="mt-8 space-y-6" action="#" method="POST">
                             <NormalText>We will send a recovery link to:</NormalText>
@@ -71,7 +75,14 @@ const ResetPassword: React.FC = () => {
                             </div>
 
                             <NormalText className="text-red-500">{errors.email?.message ?? apiError}</NormalText>
-                            {apiSuccess && <NormalText className="text-green-500">{apiSuccess}</NormalText>}
+                            {apiSuccess && (
+                                <NormalText className="text-green-500">
+                                    {apiSuccess}{' '}
+                                    <Link to={NonAuthRoutes.Login}>
+                                        Back to <span className="font-bold">login</span>
+                                    </Link>
+                                </NormalText>
+                            )}
                             <NormalButton
                                 title="Send recovery link"
                                 icon={{ name: 'ArrowRightIcon', position: 'right' }}

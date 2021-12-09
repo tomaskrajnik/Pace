@@ -3,6 +3,7 @@ export enum AuthRoutes {
     UserSettings = '/user',
     Project = '/project',
     Milestone = '/milestone',
+    NotFound = '/not-found',
 }
 
 export enum NonAuthRoutes {

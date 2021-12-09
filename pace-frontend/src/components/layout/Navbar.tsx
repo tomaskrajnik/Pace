@@ -15,7 +15,7 @@ const classNames = (...classes: string[]) => {
 
 const Navbar: React.FC = ({}) => {
     return (
-        <Disclosure as="nav" className="bg-white fixed w-screen z-45 shadow-md">
+        <Disclosure as="nav" className="bg-white fixed w-screen z-50 shadow-md">
             {({ open }) => (
                 <>
                     <div className="max-w-screen-2xl mx-auto px-2 sm:px-6 lg:px-8">

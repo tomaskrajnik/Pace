@@ -71,7 +71,9 @@ class AuthService {
       ...(email ?? null),
       ...(phoneNumber ?? null),
     };
-    if (!Object.keys(dataToBeUpdated).length) return;
+    if (!Object.keys(dataToBeUpdated).length) {
+      return paceLoggingService.log(`No changes found. Stopping the function`);
+    }
     await fbAdmin.auth().updateUser(change.after.id, dataToBeUpdated);
   }
 

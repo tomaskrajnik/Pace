@@ -89,6 +89,23 @@ class MilestonesSerice {
   }
 
   /**
+   * Create batch and delete all milestones from project
+   * @param {string} projectId
+   */
+  public async deleteMilestonesFromProject(projectId: string) {
+    paceLoggingService.log(`Attempting to delete milestones for project ${projectId}`);
+
+    const subtasks = await db.collection(databaseCollections.MILESTONES).where("projectId", "==", projectId).get();
+
+    const batch = db.batch();
+    subtasks.forEach((doc) => {
+      paceLoggingService.log(`Deleting milestone from project in batch - ${doc.id}`);
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+  }
+
+  /**
    * Update the milestone
    * @param {string} milestoneId
    * @param {Patial<Milestone>} data

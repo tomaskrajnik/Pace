@@ -11,6 +11,8 @@ export const enum ValidationRouteTypes {
   InviteUser = "inviteUser",
   CreateMilestone = "createMilestone",
   UpdateMilestone = "updateMilestone",
+  CreateSubtask = "createSubtask",
+  UpdateSubtask = "updateSubtask",
 }
 
 export const validateRequest = (route: ValidationRouteTypes) => {
@@ -82,6 +84,23 @@ export const validateRequest = (route: ValidationRouteTypes) => {
         body("color", "color does not exists").optional().isString(),
         body("startDate", "startDate does not exists").optional().isNumeric(),
         body("endDate", "endDate does not exists").optional().isNumeric(),
+      ];
+    }
+    case ValidationRouteTypes.CreateSubtask: {
+      return [
+        body("name", "name does not exists").isString(),
+        body("milestoneId").not().isEmpty().withMessage("Milestone uid cannot be empty"),
+        body("description", "description does not exists").isString(),
+        body("status", "status does not exists").isString(),
+        body("assignee", "assignee does not exists").optional(),
+      ];
+    }
+    case ValidationRouteTypes.UpdateSubtask: {
+      return [
+        body("name", "name does not exists").optional().isString(),
+        body("description", "description does not exists").optional().isString(),
+        body("status", "status does not exists").optional().isString(),
+        body("assignee", "assignee does not exists").optional(),
       ];
     }
   }

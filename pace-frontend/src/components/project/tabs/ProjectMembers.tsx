@@ -9,7 +9,7 @@ import { ProjectMembersTable } from '../ProjectMembersTable';
 
 const ProjectMembers: React.FC = () => {
     const user = useSelector(userSelector);
-    const { id: projectId } = useParams<{ id: string }>();
+    const { projectId } = useParams<{ projectId: string }>();
     const project = useSelector((state: RootState) => projectByIdSelector(state, projectId));
     const userRole = useSelector((state: RootState) => projectUserRoleSelector(state, projectId));
     if (!user || !project || !userRole) return null;

@@ -1,5 +1,4 @@
 import { AxiosInstance } from 'axios';
-import { Firestore, getFirestore } from 'firebase/firestore';
 import { config } from '../config';
 import { axiosInstance } from './axios';
 import {
@@ -15,7 +14,7 @@ class MilestonesService {
      *
      */
 
-    constructor(private readonly API: string, private readonly axios: AxiosInstance, private readonly db: Firestore) {}
+    constructor(private readonly API: string, private readonly axios: AxiosInstance) {}
 
     /**
      * Create milestone
@@ -23,7 +22,6 @@ class MilestonesService {
      * @returns
      */
     public async createMilestone(data: CreateMilestoneRequest) {
-        console.log(this.db);
         try {
             const response = await this.axios.post<CreateMilestoneResponse>(`${this.API}/create`, data);
 
@@ -76,4 +74,4 @@ class MilestonesService {
         }
     }
 }
-export default new MilestonesService(`${config.API_URL}/milestones`, axiosInstance, getFirestore());
+export default new MilestonesService(`${config.API_URL}/milestones`, axiosInstance);

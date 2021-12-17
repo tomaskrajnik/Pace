@@ -181,6 +181,7 @@ class SubtasksService {
     });
 
     subtasks.filter((s) => s.reporter.uid === userId || s.assignee?.uid === userId);
+    if (!subtasks) return;
     subtasks.forEach((s) => {
       if (s.assignee && s.assignee.uid === userId) {
         return this.updateSubtask(s.uid, { assignee: { ...s.assignee, ...dataToBeUpdated } });

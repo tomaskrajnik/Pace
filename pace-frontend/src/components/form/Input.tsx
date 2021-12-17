@@ -64,7 +64,7 @@ const Input: React.FC<InputProps & InputHTMLAttributes<HTMLDivElement>> = ({
                         position === 'top' && leftLabel && 'rounded-tr-md'
                     } focus:outline-none focus:ring-blue-500 ${
                         error ? 'focus:border-blue-500' : 'focus:border-blue-500'
-                    }  focus:z-10 sm:text-sm ${className}`}
+                    }   sm:text-sm ${className}`}
                     placeholder={placeholder}
                 />
             </div>

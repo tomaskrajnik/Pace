@@ -29,7 +29,7 @@ const schema = yup.object().shape({
 const MAX_IMAGES_NUMBER = 1;
 
 const ProjectSettings: React.FC = ({}) => {
-    const { id: projectId } = useParams<{ id: string }>();
+    const { projectId } = useParams<{ projectId: string }>();
     const project = useSelector((state: RootState) => projectByIdSelector(state, projectId));
     const userRole = useSelector((state: RootState) => projectUserRoleSelector(state, projectId));
     const [loading, setLoading] = useState(false);

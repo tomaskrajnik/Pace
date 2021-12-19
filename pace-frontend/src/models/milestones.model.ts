@@ -1,4 +1,5 @@
 import { PaceColorsEnum } from '../utils/colors';
+import { Subtask } from './subtasks.model';
 
 /**
  * class Milestone
@@ -6,13 +7,13 @@ import { PaceColorsEnum } from '../utils/colors';
 export class Milestone {
     public uid: string;
     public name: string;
-    public subtasks: string[];
     public createdAt: number;
     public startDate: number;
     public endDate: number;
     public description?: string;
     public color: PaceColorsEnum | string;
     public projectId: string;
+    public subtasks?: Subtask[];
 
     /**
      * class Milestone constructor
@@ -21,12 +22,12 @@ export class Milestone {
     constructor(milestoneConfig: any) {
         this.uid = milestoneConfig.uid;
         this.name = milestoneConfig.name;
-        this.subtasks = milestoneConfig.subtasks;
         this.createdAt = milestoneConfig.createdAt;
         this.startDate = milestoneConfig.startDate;
         this.endDate = milestoneConfig.endDate;
         this.description = milestoneConfig.description;
         this.color = milestoneConfig.color;
         this.projectId = milestoneConfig.projectId;
+        this.subtasks = milestoneConfig.subtask;
     }
 }

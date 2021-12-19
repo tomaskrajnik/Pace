@@ -37,7 +37,9 @@ export const Milestone: React.FC = () => {
     if (!userHasAccess) return null;
 
     const { milestone, loading: milestoneLoading } = useSubscribeToMilestone(projectId, milestoneId);
+
     const loading = useLoadingDebounce(milestoneLoading);
+
     const renderContent = useCallback(() => {
         if (loading) return <Skeleton height={250} />;
         if (!milestone) return <Redirect to={AuthRoutes.NotFound} />;

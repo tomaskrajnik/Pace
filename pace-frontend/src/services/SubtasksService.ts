@@ -2,14 +2,14 @@ import { AxiosInstance } from 'axios';
 import { config } from '../config';
 import { axiosInstance } from './axios';
 import {
-    CreateMilestoneRequest,
-    CreateMilestoneResponse,
-    DeleteMilestoneResponse,
-    UpdateMilestoneRequest,
-    UpdateMilestoneResponse,
-} from './MilestoneService.types';
+    CreateSubtaskResponse,
+    CreateSubtasktRequest,
+    DeleteSubtaskResponse,
+    UpdateSubtaskResponse,
+    UpdateSubtasktRequest,
+} from './SubtasksService.types';
 
-class MilestonesService {
+class SubtaskService {
     /**
      *
      */
@@ -17,13 +17,13 @@ class MilestonesService {
     constructor(private readonly API: string, private readonly axios: AxiosInstance) {}
 
     /**
-     * Create milestone
-     * @param {CreateMilestoneRequest} data
+     * Create subtask
+     * @param {CreateSubtasktRequest} data
      * @returns
      */
-    public async createMilestone(data: CreateMilestoneRequest) {
+    public async createSubtask(data: CreateSubtasktRequest) {
         try {
-            const response = await this.axios.post<CreateMilestoneResponse>(`${this.API}/create`, data);
+            const response = await this.axios.post<CreateSubtaskResponse>(`${this.API}/create`, data);
 
             if (response.data.error) {
                 throw new Error(response.data.error);
@@ -36,14 +36,14 @@ class MilestonesService {
     }
 
     /**
-     * Update milestone
-     * @param {string} id - id of the milestone
-     * @param {UpdateMilestoneRequest} data
+     * Update subtask
+     * @param {string} subtaskId
+     * @param {UpdateSubtasktRequest} data
      * @returns
      */
-    public async updateMilestone(id: string, data: UpdateMilestoneRequest) {
+    public async updateSubtask(subtaskId: string, data: UpdateSubtasktRequest) {
         try {
-            const response = await this.axios.put<UpdateMilestoneResponse>(`${this.API}/update/${id}`, data);
+            const response = await this.axios.put<UpdateSubtaskResponse>(`${this.API}/update/${subtaskId}`, data);
 
             if (response.data.error) {
                 throw new Error(response.data.error);
@@ -56,13 +56,13 @@ class MilestonesService {
     }
 
     /**
-     * Delete milestone
-     * @param {string} id - id of the milestone
+     * Delete subtask
+     * @param {string} subtaskId
      * @returns
      */
-    public async deleteMilestone(id: string) {
+    public async deleteSubtask(subtaskId: string) {
         try {
-            const response = await this.axios.delete<DeleteMilestoneResponse>(`${this.API}/delete/${id}`);
+            const response = await this.axios.delete<DeleteSubtaskResponse>(`${this.API}/delete/${subtaskId}`);
 
             if (response.data.error) {
                 throw new Error(response.data.error);
@@ -74,4 +74,4 @@ class MilestonesService {
         }
     }
 }
-export default new MilestonesService(`${config.API_URL}/milestones`, axiosInstance);
+export default new SubtaskService(`${config.API_URL}/subtasks`, axiosInstance);

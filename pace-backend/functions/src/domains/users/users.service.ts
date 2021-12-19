@@ -144,22 +144,6 @@ class UserService {
   }
 
   /**
-   * Automatically remove project from users model after deleting the original
-   * @param {snapshot}
-   * @param {context}
-   */
-  public async removeProjectFromUserAfterDelete(snapshot: any, context: any): Promise<void> {
-    const projectId = snapshot.id;
-    const data: Project = snapshot.data();
-    const promises: Promise<void>[] = [];
-    data.members.forEach((m) => {
-      promises.push(this.removeProjectFromUser(m.uid, projectId));
-    });
-
-    await Promise.all(promises);
-  }
-
-  /**
    * Remove project from the user
    * @param {string} userId
    * @param {string} projectId
@@ -183,6 +167,7 @@ class UserService {
   public async findUserInFirestore(uid: string) {
     paceLoggingService.log(`${UserService.name}.${this.findUserInFirestore.name}, Getting firestore user:,`, { uid });
     const [err, doc] = await to(db.collection(databaseCollections.USERS).doc(uid).get());
+
     if (err) {
       paceLoggingService.error(JSON.stringify(err));
     }

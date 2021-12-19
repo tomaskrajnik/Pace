@@ -27,7 +27,12 @@ const Router: React.FC<ReturnType<typeof mapStateToProps>> = ({ authenticated })
             <NonAuthRoute authenticated={authenticated} path={NonAuthRoutes.ResetPassword} component={ResetPassword} />
             <AuthRoute authenticated={authenticated} exact path={AuthRoutes.Dashboard} component={Dashboard} />
             <AuthRoute authenticated={authenticated} exact path={AuthRoutes.UserSettings} component={UserSettings} />
-            <AuthRoute authenticated={authenticated} exact path={`${AuthRoutes.Project}/:id`} component={Project} />
+            <AuthRoute
+                authenticated={authenticated}
+                exact
+                path={`${AuthRoutes.Project}/:projectId`}
+                component={Project}
+            />
             <AuthRoute
                 authenticated={authenticated}
                 exact

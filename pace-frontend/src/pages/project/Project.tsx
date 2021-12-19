@@ -28,16 +28,16 @@ interface ProjectPageTab {
 }
 
 const Project: React.FC = ({}) => {
-    const { id } = useParams<{ id: string }>();
-    const project = useSelector((state: RootState) => projectByIdSelector(state, id));
-    const userRole = useSelector((state: RootState) => projectUserRoleSelector(state, id));
+    const { projectId } = useParams<{ projectId: string }>();
+    const project = useSelector((state: RootState) => projectByIdSelector(state, projectId));
+    const userRole = useSelector((state: RootState) => projectUserRoleSelector(state, projectId));
     if (!project) return <Redirect to={AuthRoutes.NotFound} />;
 
     // Set title
     useDocumentTitle(`Pace - ${project.name} project`);
 
     // Fire of listener for milestones
-    useSubscribeToMilestonesForProject(id);
+    useSubscribeToMilestonesForProject(projectId);
 
     // Tabs
     const [tabs] = useState<ProjectPageTab[]>([

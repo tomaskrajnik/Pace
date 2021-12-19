@@ -30,7 +30,7 @@ const schema = yup.object().shape({
 });
 
 export const EditMilestoneForm: React.FC<EditMilestoneFormProps> = ({ milestone, onEditModeExit }) => {
-    const { id: projectId } = useParams<{ id: string }>();
+    const { projectId } = useParams<{ projectId: string }>();
     const [startDate, setStartDate] = useState<Date>(new Date(milestone.startDate));
     const [endDate, setEndDate] = useState<Date>(new Date(milestone.endDate));
     const [color, setColor] = useState<string | PaceColorsEnum>(milestone.color);

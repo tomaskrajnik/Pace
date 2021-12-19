@@ -6,6 +6,8 @@ import { firebaseHelper } from "../../shared/services/firebase-helper.service";
 import { paceLoggingService } from "../../utils/services/logger";
 import { Invitation } from "../invitations/invitations.model";
 import { Milestone } from "../milestones/milestones.model";
+import { milesoneService } from "../milestones/milestones.service";
+import { subtasksService } from "../subtasks/subtasks.service";
 import { User } from "../users/users.model";
 import { userService } from "../users/users.service";
 import { Project, ProjectMember, ProjectMemberRole } from "./projects.model";
@@ -303,6 +305,12 @@ class ProjectService {
       userId,
     });
     const user = (await userService.findUserInFirestore(userId)) as User;
+
+    if (user.projects.length === 0) {
+      paceLoggingService.log(`No projects found for user ${userId}. Stopping update`);
+      return null;
+    }
+
     const snapshot = await db
       .collection(databaseCollections.PROJECTS)
       .where(firestore.FieldPath.documentId(), "in", user.projects)
@@ -311,6 +319,24 @@ class ProjectService {
     const projects = firebaseHelper.docsToObjects(snapshot.docs);
 
     return projects ? projects : null;
+  }
+
+  /**
+   * Remove all traces after deleting project
+   * @param {snapshot}
+   * @param {context}
+   */
+  public async removeAllTracesAfterDelete(snapshot: any, context: any): Promise<void> {
+    const projectId = snapshot.id;
+    const data: Project = snapshot.data();
+    const promises: Promise<void>[] = [];
+    data.members.forEach((m) => {
+      promises.push(userService.removeProjectFromUser(m.uid, projectId));
+    });
+
+    promises.push(milesoneService.deleteMilestonesFromProject(projectId));
+
+    await Promise.all(promises);
   }
 
   /**
@@ -323,7 +349,10 @@ class ProjectService {
     const milestoneId = snapshot.id;
     const { projectId } = snapshot.data() as Milestone;
     const project = await this.findProjectInFirestore(projectId);
-    if (!project) return;
+    if (!project) {
+      // Project might be deleted. Lets delete all subtasks too
+      return await subtasksService.deleteSubtasksForProject(milestoneId);
+    }
     let milestones: string[] = [];
     if (project.milestones.includes(milestoneId)) {
       // Means we have to delete it from project
@@ -332,6 +361,8 @@ class ProjectService {
         { milestoneId }
       );
       milestones = project.milestones.filter((m) => m !== milestoneId);
+      // Delete all subtasks connected to milestone
+      await subtasksService.deleteSubtasksForProject(milestoneId);
     } else {
       // Means we have to add it to the project
       paceLoggingService.log(

@@ -19,3 +19,8 @@ export const projectUserRoleSelector = (state: RootState, projectId: string) => 
     if (!user) return null;
     return project?.members.find((m: ProjectMember) => m.uid === user.uid)?.role;
 };
+
+export const projectMembersSelector = (state: RootState, projectId: string) => {
+    const project = projectByIdSelector(state, projectId);
+    return project.members;
+};

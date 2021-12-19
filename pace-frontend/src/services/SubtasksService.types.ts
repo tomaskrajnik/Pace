@@ -16,8 +16,19 @@ export interface CreateSubtasktRequest {
     description?: string;
 }
 
+export interface UpdateSubtasktRequest {
+    name?: string;
+    status?: SubtasksStatus;
+    assignee?: SubtaskMember | null | string;
+    description?: string;
+}
+
+export interface UpdateSubtaskSuccess {
+    success: boolean;
+}
 export interface CreateSubtaskSuccess {
     subtaks: Subtask;
 }
 
-export type CreateSubtaskresponse = APISuccess<CreateSubtaskSuccess> & APIError;
+export type CreateSubtaskResponse = APISuccess<CreateSubtaskSuccess> & APIError;
+export type UpdateSubtaskResponse = APISuccess<UpdateSubtaskSuccess> & APIError;

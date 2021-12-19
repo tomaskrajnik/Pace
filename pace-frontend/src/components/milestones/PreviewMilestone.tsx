@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useSubscribeToSubtasks } from '../../hooks/useSubscribeToSubtasks';
 import { Milestone } from '../../models/milestones.model';
+import { Subtask, SubtasksStatus } from '../../models/subtasks.model';
 import { AuthRoutes } from '../../routes/routes.types';
 import NormalButton from '../common/NormalButton';
 import NormalText from '../common/NormalText';
 import { CreateSubtaskModal } from '../subtasks/CreateSubtaskModal';
+import { PreviewSubtaskModal } from '../subtasks/PreviewSubtaskModal';
 import { SubtaskListItem } from '../subtasks/SubtasksListItem';
 
 interface PreviewMilestoneProps {
@@ -16,11 +18,15 @@ interface PreviewMilestoneProps {
     onDeletePressed?: () => void;
 }
 
+const SORT_ORDER = [SubtasksStatus.Done, SubtasksStatus.InProgress, SubtasksStatus.ToDo];
+
 export const PreviewMilestone: React.FC<PreviewMilestoneProps> = ({ milestone, onEditPressed, onDeletePressed }) => {
     const { projectId } = useParams<{ projectId: string }>();
     const { subtasks } = useSubscribeToSubtasks(milestone.uid);
 
     const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
+    const [subtaskToPreview, setSubtaskToPreview] = useState<Subtask | null>(null);
+
     return (
         <>
             <div className="bg-white rounded-lg pb-4 sm:pb-4">
@@ -94,9 +100,11 @@ export const PreviewMilestone: React.FC<PreviewMilestoneProps> = ({ milestone, o
                     </div>
                     {subtasks && subtasks.length > 0 && (
                         <div className="mt-6 border border-gray-200 rounded-lg shadow bg-gray-50 w-100">
-                            {subtasks.map((s) => (
-                                <SubtaskListItem key={s.uid} subtask={s} color={milestone.color} />
-                            ))}
+                            {subtasks
+                                .sort((a, b) => SORT_ORDER.indexOf(a.status) - SORT_ORDER.indexOf(b.status))
+                                .map((s) => (
+                                    <SubtaskListItem onClick={() => setSubtaskToPreview(s)} key={s.uid} subtask={s} />
+                                ))}
                         </div>
                     )}
                 </div>
@@ -105,6 +113,11 @@ export const PreviewMilestone: React.FC<PreviewMilestoneProps> = ({ milestone, o
                 isOpen={createTaskModalOpen}
                 onClose={() => setCreateTaskModalOpen(false)}
                 milestoneId={milestone.uid}
+            />
+            <PreviewSubtaskModal
+                milestoneId={milestone.uid}
+                subtaskToPreview={subtaskToPreview}
+                onClose={() => setSubtaskToPreview(null)}
             />
         </>
     );

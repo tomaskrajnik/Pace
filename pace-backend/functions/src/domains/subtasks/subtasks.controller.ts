@@ -51,11 +51,14 @@ export async function updateSubtask(req: any, res: any) {
     return sendResponse(res, HttpStatusCode.BAD_REQUEST, {
       errors: errors.array(),
     });
-  console.log(req.subtask);
+
   const { subtask_id } = req.subtask;
   paceLoggingService.log(`subtasks/update/${subtask_id}`, { updateData: req.body });
 
   const updateData = mapRequestObjectToModel<Partial<Subtask>>(Subtask, req);
+
+  if (req.body.assignee === "unassigned") updateData.assignee = null;
+
   try {
     const response = await subtasksService.updateSubtask(subtask_id, updateData);
     if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, response);

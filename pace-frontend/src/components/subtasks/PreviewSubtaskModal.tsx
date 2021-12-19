@@ -186,7 +186,7 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
                                                 onClick={() => setTitleInputOpened(true)}
                                                 className="hover:bg-gray-100 py-1 px-2"
                                             >
-                                                <NormalText className="text-lg ">{s.name}</NormalText>
+                                                <NormalText className="text-lg ">{getValues('name')}</NormalText>
                                             </div>
                                         )}
                                     </div>

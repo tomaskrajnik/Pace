@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import NormalText from '../common/NormalText';
 import * as yup from 'yup';
@@ -43,7 +43,6 @@ export const CreateSubtaskModal: React.FC<CreateSubtaskModalProps> = ({ onClose,
         control,
         handleSubmit,
         reset,
-
         clearErrors,
         formState: { errors },
     } = useForm<IFormInputs>({
@@ -60,6 +59,15 @@ export const CreateSubtaskModal: React.FC<CreateSubtaskModalProps> = ({ onClose,
         () => project.members.map(({ role, ...m }) => m),
         [project.members],
     );
+
+    useEffect(() => {
+        return () => {
+            reset();
+            setSelectedAssignee(null);
+            setSelectedStatus(SubtasksStatus.ToDo);
+        };
+    }, [isOpen]);
+
     return (
         <Transition.Root show={isOpen} as={Fragment}>
             <Dialog as="div" className="fixed z-50 inset-0 h-100" initialFocus={cancelButtonRef} onClose={onClose}>

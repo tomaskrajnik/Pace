@@ -1,10 +1,10 @@
 import { AxiosInstance } from 'axios';
-import { Firestore, getFirestore } from 'firebase/firestore';
 import { config } from '../config';
 import { axiosInstance } from './axios';
 import {
     CreateSubtaskResponse,
     CreateSubtasktRequest,
+    DeleteSubtaskResponse,
     UpdateSubtaskResponse,
     UpdateSubtasktRequest,
 } from './SubtasksService.types';
@@ -14,7 +14,7 @@ class SubtaskService {
      *
      */
 
-    constructor(private readonly API: string, private readonly axios: AxiosInstance, private readonly db: Firestore) {}
+    constructor(private readonly API: string, private readonly axios: AxiosInstance) {}
 
     /**
      * Create subtask
@@ -22,7 +22,6 @@ class SubtaskService {
      * @returns
      */
     public async createSubtask(data: CreateSubtasktRequest) {
-        console.log(this.db);
         try {
             const response = await this.axios.post<CreateSubtaskResponse>(`${this.API}/create`, data);
 
@@ -55,5 +54,24 @@ class SubtaskService {
             throw new Error(err.message);
         }
     }
+
+    /**
+     * Delete subtask
+     * @param {string} subtaskId
+     * @returns
+     */
+    public async deleteSubtask(subtaskId: string) {
+        try {
+            const response = await this.axios.delete<DeleteSubtaskResponse>(`${this.API}/delete/${subtaskId}`);
+
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            return response.data.data;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
 }
-export default new SubtaskService(`${config.API_URL}/subtasks`, axiosInstance, getFirestore());
+export default new SubtaskService(`${config.API_URL}/subtasks`, axiosInstance);

@@ -14,11 +14,12 @@ import { RootState } from '../../store';
 import { projectByIdSelector } from '../../store/projects/projects.selectors';
 import { AssigneeSelector } from '../form/AssigneeSelector';
 import { useSubtaskActions } from '../../hooks/useSubtaskActions';
-import CheckCircleIcon from '@heroicons/react/solid/CheckCircleIcon';
+import { TrashIcon, CheckCircleIcon } from '@heroicons/react/solid';
 import moment from 'moment';
 import { SubtaskAssignee } from './SubtaskAssignee';
 import useOnClickOutside from '../../hooks/useHandleClickOutside';
 import { UpdateSubtasktRequest } from '../../services/SubtasksService.types';
+import { WarningPopUp } from '../layout/WarningPopUp';
 
 interface PreviewSubtaskModalProps {
     subtaskToPreview: Subtask | null;
@@ -48,8 +49,10 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
     const [selectedAssignee, setSelectedAssignee] = useState<SubtaskMember | null>(null);
     const [titleInputOpened, setTitleInputOpened] = useState(false);
     const [descriptionInputOpened, setDescriptionInputOpened] = useState(false);
+    const [warningPopUpOpened, setWarningPopUpOpened] = useState(false);
 
-    const { loading, updateSubtask } = useSubtaskActions();
+    const { loading, updateSubtask, deleteSubtask } = useSubtaskActions();
+
     const titleRef = useRef(null);
     const descriptionRef = useRef(null);
     const renderIcon = useCallback(() => {
@@ -81,6 +84,8 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
         control,
         handleSubmit,
         setValue,
+        getValues,
+        reset,
         formState: { errors, isDirty },
     } = useForm<IFormInputs>({
         defaultValues: {
@@ -97,6 +102,11 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
         if (s?.description) setValue('description', s.description);
         if (s?.assignee) setSelectedAssignee(s.assignee);
         if (s?.status) setSelectedStatus(s.status);
+
+        return () => {
+            reset();
+            setSelectedAssignee(null);
+        };
     }, [s]);
 
     if (!s) return null;
@@ -216,7 +226,9 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
                                                 onClick={() => setDescriptionInputOpened(true)}
                                             >
                                                 <NormalText>{`${
-                                                    s.description ? s.description : 'No description'
+                                                    getValues('description')
+                                                        ? getValues('description')
+                                                        : 'No description'
                                                 }`}</NormalText>
                                             </div>
                                         )}
@@ -236,6 +248,15 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
                                             </NormalText>
                                             <SubtaskAssignee member={s.reporter} />
                                         </div>
+                                        <div className="mt-4">
+                                            <button
+                                                onClick={() => setWarningPopUpOpened(true)}
+                                                className="px-4 py-2 items-center text-sm font-bold text-red-400 rounded-md bg-red-50 hover:bg-red-100 flex"
+                                            >
+                                                <TrashIcon className="w-4 h-4 text-red-400 mr-1" />
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -254,6 +275,20 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
                         </div>
                     </Transition.Child>
                 </div>
+                <WarningPopUp
+                    loading={loading}
+                    onAction={() =>
+                        deleteSubtask(s.uid, () => {
+                            setWarningPopUpOpened(false);
+                            onClose();
+                        })
+                    }
+                    action="Delete"
+                    onClose={() => setWarningPopUpOpened(false)}
+                    isOpen={warningPopUpOpened}
+                    header="Are you sure you want to delete this subtasks?"
+                    text="You may loose progress on the milestone"
+                />
             </Dialog>
         </Transition.Root>
     );

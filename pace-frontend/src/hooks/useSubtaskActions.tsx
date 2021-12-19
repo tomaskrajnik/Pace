@@ -6,6 +6,7 @@ import { CreateSubtasktRequest, UpdateSubtasktRequest } from '../services/Subtas
 interface SubtaskActions {
     createSubtask: (data: CreateSubtasktRequest, callback?: () => void) => Promise<void>;
     updateSubtask: (subtaskId: string, data: UpdateSubtasktRequest, callback?: () => void) => Promise<void>;
+    deleteSubtask: (subtaskId: string, callback?: () => void) => Promise<void>;
     loading: boolean;
 }
 
@@ -38,5 +39,18 @@ export const useSubtaskActions = (): SubtaskActions => {
         }
     };
 
-    return { createSubtask, updateSubtask, loading };
+    const deleteSubtask = async (subtaskId: string, callback?: () => void) => {
+        try {
+            setLoading(true);
+            await SubtasksService.deleteSubtask(subtaskId);
+            toast.success('Subtask deleted');
+            callback?.();
+        } catch (err) {
+            toast.error('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { createSubtask, updateSubtask, deleteSubtask, loading };
 };

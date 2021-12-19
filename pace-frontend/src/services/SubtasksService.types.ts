@@ -30,5 +30,10 @@ export interface CreateSubtaskSuccess {
     subtaks: Subtask;
 }
 
+export interface DeleteSubtaskSuccess {
+    success: boolean;
+}
+
 export type CreateSubtaskResponse = APISuccess<CreateSubtaskSuccess> & APIError;
 export type UpdateSubtaskResponse = APISuccess<UpdateSubtaskSuccess> & APIError;
+export type DeleteSubtaskResponse = APISuccess<DeleteSubtaskSuccess> & APIError;

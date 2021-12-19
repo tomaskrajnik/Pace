@@ -122,7 +122,7 @@ export const PreviewMilestone: React.FC<PreviewMilestoneProps> = ({ milestone, o
                     </div>
                     <div className="mt-4 flex items-center flex-row justify-between">
                         <NormalText className="font-bold mr-1">
-                            <span className="text-gray-500 text-sm">Subtasks:</span>
+                            <span className="text-gray-500 text-sm">Child subtasks:</span>
                         </NormalText>
                         <div className="w-30">
                             <NormalButton

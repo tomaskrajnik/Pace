@@ -42,12 +42,12 @@ export const SubtaskListItem: React.FC<SubtaskListItemProps> = ({ subtask: s, on
 
     const handleStatusChange = async (status: SubtasksStatus) => {
         setSelectedStatus(status);
-        await updateSubtask(s.uid, { status });
+        await updateSubtask(s.uid, { status }, () => null, true);
     };
 
     const handleAssigneeChange = async (assignee: SubtaskMember | null) => {
         setAssignee(assignee);
-        await updateSubtask(s.uid, { assignee: assignee ?? 'unassigned' });
+        await updateSubtask(s.uid, { assignee: assignee ?? 'unassigned' }, () => null, true);
     };
 
     return (

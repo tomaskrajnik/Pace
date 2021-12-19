@@ -118,12 +118,12 @@ export const PreviewSubtaskModal: React.FC<PreviewSubtaskModalProps> = ({
 
     const handleStatusChange = async (status: SubtasksStatus) => {
         setSelectedStatus(status);
-        await updateSubtask(s.uid, { status });
+        await updateSubtask(s.uid, { status }, () => null, true);
     };
 
     const handleAssigneeChange = async (assignee: SubtaskMember | null) => {
         setSelectedAssignee(assignee);
-        await updateSubtask(s.uid, { assignee: assignee ?? 'unassigned' });
+        await updateSubtask(s.uid, { assignee: assignee ?? 'unassigned' }, () => null, true);
     };
 
     return (

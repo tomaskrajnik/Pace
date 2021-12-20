@@ -39,7 +39,7 @@ export const AssigneeSelector: React.FC<AssigneeSelectorProps> = ({
                         leaveTo="opacity-0"
                     >
                         <Listbox.Options
-                            className={`absolute bg-white  z-50 mt-2 pb-2 text-base rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
+                            className={`absolute bg-white  z-50 mt-2 pb-2 text-base rounded-md shadow-lg overflow-scroll max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
                         >
                             <Listbox.Option
                                 key="unassigned"
@@ -97,7 +97,7 @@ cursor-default select-none relative py-1 px-4 hover:bg-gray-50 cursor-pointer ro
                     leaveTo="opacity-0"
                 >
                     <Listbox.Options
-                        className={`absolute bg-white z-50 mt-2 pb-2 text-base rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
+                        className={`absolute bg-white z-50 mt-2 pb-2 text-base rounded-md shadow-lg overflow-scroll max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
                     >
                         <Listbox.Option
                             key="unassigned"

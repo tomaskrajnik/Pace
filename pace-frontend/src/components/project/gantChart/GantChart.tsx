@@ -41,7 +41,9 @@ export const GantChart: React.FC<GantChartProps> = ({ onAddNew }) => {
                 return 100;
         }
     }, [viewMode]);
+
     if (!milestones) return null;
+
     const mapMilestonesToTasks = (milestones: Milestone[]) => {
         const mappedtasks: Task[] = [];
         milestones.forEach((m) => {

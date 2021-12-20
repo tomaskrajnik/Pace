@@ -33,7 +33,6 @@ const ProjectListItemVertical: React.FC<ProjectListItemVerticalProps> = ({ proje
             toast.success('Success');
         } catch (err) {
             toast.error('Something went wrong');
-            console.log(err);
         } finally {
             setLeaveButtonLoading(false);
             setLeaveModalOpen(false);

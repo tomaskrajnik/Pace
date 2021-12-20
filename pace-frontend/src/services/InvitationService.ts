@@ -38,7 +38,6 @@ class InvitationService {
    
      */
     public async listenToInvitations() {
-        console.log(this.API, this.axios);
         // Get state
         const user = store.getState().auth.user;
         if (!user) return;

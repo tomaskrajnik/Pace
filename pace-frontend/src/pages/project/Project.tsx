@@ -82,7 +82,7 @@ const Project: React.FC = ({}) => {
                 <NormalText className="mr-4 text-bold">Members: </NormalText>{' '}
                 <AvatarGroup projectMembers={project.members} />
             </div>
-            <div className="w-full  px-2 mt-6 sm:px-0">
+            <div className="w-full outline-0 focus:outline-0 px-2 mt-6 sm:px-0">
                 <Tab.Group>
                     <Tab.List className="flex sm:max-w-2xl p-1 space-x-1 sm:bg-gray-100 rounded-xl">
                         {tabs.map((tab) => {
@@ -92,13 +92,13 @@ const Project: React.FC = ({}) => {
                                     key={tab.id}
                                     className={({ selected }) =>
                                         classNames(
-                                            'w-full py-2.5 text-sm leading-5 font-medium  rounded-lg',
-                                            'focus:outline-none outline-none',
+                                            'w-full py-2.5 text-sm leading-5 font-medium rounded-lg',
+                                            'focus:outline-0 outline-0',
                                             selected ? ' bg-white shadow' : 'hover:bg-blue/[0.60] text-gray-700',
                                         )
                                     }
                                 >
-                                    <div className="flex items-center justify-center">
+                                    <div className="flex outline-none items-center justify-center">
                                         <div className="w-4 h-4 mr-1.5">{tab.icon}</div>
                                         {tab.title}
                                     </div>
@@ -106,11 +106,14 @@ const Project: React.FC = ({}) => {
                             );
                         })}
                     </Tab.List>
-                    <Tab.Panels className="mt-6">
+                    <Tab.Panels className="mt-6 outline-none">
                         {tabs.map((t) => {
                             if (t.id === 2 && userRole === ProjectMemberRole.VIEWER) return null;
                             return (
-                                <Tab.Panel key={t.id} className="mt-4 w-full">
+                                <Tab.Panel
+                                    key={t.id}
+                                    className="mt-4 outline-0 border-0 focus:border-0 focus:outline-0 w-full"
+                                >
                                     {t.component}
                                 </Tab.Panel>
                             );

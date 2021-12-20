@@ -208,7 +208,7 @@ const ProjectSettings: React.FC = ({}) => {
                                         If a ownner leaves the project. The whole project will be deleted
                                     </NormalText>
                                 </div>
-                                <div className="inline-block mt-2 sm:mt-0 w-30">
+                                <div className="inline-block mt-2 sm:mt-1 w-30">
                                     <NormalButton
                                         className="shadow"
                                         title="Leave Project"
@@ -224,7 +224,7 @@ const ProjectSettings: React.FC = ({}) => {
                                         Once you delete a project, there is no going back. Please be certain.
                                     </NormalText>
                                 </div>
-                                <div className="inline-block mt-2 sm:mt-0 w-30">
+                                <div className="inline-block mt-2 sm:mt-1 w-30">
                                     <NormalButton
                                         disabled={userRole === ProjectMemberRole.EDITOR}
                                         className="shadow"

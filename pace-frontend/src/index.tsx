@@ -8,6 +8,7 @@ import { store } from './store';
 
 ReactDOM.render(
     <React.StrictMode>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <Provider store={store}>
             <App />
         </Provider>

@@ -3,6 +3,7 @@ import { db } from "../../shared/database/admin";
 import { databaseCollections } from "../../shared/enums/database-collections.enum";
 import { firebaseHelper } from "../../shared/services/firebase-helper.service";
 import { paceLoggingService } from "../../utils/services/logger";
+import { milesoneService } from "../milestones/milestones.service";
 import { projectService } from "../projects/projects.service";
 import { User } from "../users/users.model";
 import { userService } from "../users/users.service";
@@ -147,13 +148,36 @@ class SubtasksService {
   }
 
   /**
+   * Get all assigned subtasks for user for specific project
+   * @param {string} projectId
+   * @param {string} userId
+   */
+  public async getAllAssignedSubtasksForProject(projectId: string, userId: string) {
+    paceLoggingService.log(
+      `${SubtasksService.name}.${this.getAllAssignedSubtasksForProject.name} Getting all assigned subtasks for`,
+      { projectId, userId }
+    );
+    const milestones = await milesoneService.getMilestonesForProject(projectId);
+    let assignedSubtasks: Subtask[] = [];
+    for (const m of milestones) {
+      const subtasks = await subtasksService.getSubtasksForMilestone(m.uid);
+      for (const s of subtasks) {
+        if (s.assignee && s.assignee.uid === userId) {
+          assignedSubtasks = [s, ...assignedSubtasks];
+        }
+      }
+    }
+    return assignedSubtasks;
+  }
+
+  /**
    * Update subtasks member after user update
    * @param {any}  change  User uid
    * @param {any}  context Updated data
-   * @returnType {Promise} void
    */
   public async updateSubtasksMembers(change: any, context: any): Promise<void> {
     const after = change.after.data();
+
     const { photoUrl, name } = after;
 
     const userId = change.after.id;
@@ -177,7 +201,8 @@ class SubtasksService {
     let subtasks: Subtask[] = [];
 
     milesstonesIds.forEach(async (mId) => {
-      subtasks.push(await this.getSubtasksForMilestone(mId));
+      const s = await this.getSubtasksForMilestone(mId);
+      subtasks = [...s, ...subtasks];
     });
 
     subtasks.filter((s) => s.reporter.uid === userId || s.assignee?.uid === userId);
@@ -205,8 +230,8 @@ class SubtasksService {
         milestoneId,
       }
     );
-    const subtasks = await db.collection(databaseCollections.SUBTASKS).where("milestoneId", "==", milestoneId).get();
-    return firebaseHelper.docsToObjects(subtasks);
+    const { docs } = await db.collection(databaseCollections.SUBTASKS).where("milestoneId", "==", milestoneId).get();
+    return firebaseHelper.docsToObjects(docs) as Subtask[];
   }
 
   /**

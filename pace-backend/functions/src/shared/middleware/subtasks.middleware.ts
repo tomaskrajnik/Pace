@@ -1,5 +1,5 @@
-import { milesoneService } from "../../domains/milestones/milestones.service";
-import { subtasksService } from "../../domains/subtasks/subtasks.service";
+import { milesoneService } from "../../api/milestones/milestones.service";
+import { subtasksService } from "../../api/subtasks/subtasks.service";
 import { sendResponse } from "../../utils/http";
 import { paceLoggingService } from "../../utils/services/logger";
 import { HttpStatusCode } from "../enums/http-status-codes.enum";

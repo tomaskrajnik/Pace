@@ -178,7 +178,10 @@ export async function removeMemberFromProject(req: any, res: any) {
     if (response.error) return sendResponse(res, HttpStatusCode.BAD_REQUEST, leaveResponse);
     return sendResponse(res, HttpStatusCode.OK, leaveResponse);
   } catch (err) {
-    paceLoggingService.error("Error while leaving the project", { error: err });
+    if (err instanceof Error) {
+      paceLoggingService.error("Error while leaving the project", { error: err.message });
+    }
+
     sendResponse(res, HttpStatusCode.INTERNAL_SERVER, err);
   }
 }

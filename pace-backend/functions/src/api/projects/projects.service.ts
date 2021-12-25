@@ -284,6 +284,14 @@ class ProjectService {
       }
     }
 
+    // Unassign user from subtasks
+    const assignedSubtasks = await subtasksService.getAllAssignedSubtasksForProject(projectId, userId);
+    if (assignedSubtasks.length) {
+      for (const a of assignedSubtasks) {
+        await subtasksService.updateSubtask(a.uid, { assignee: null });
+      }
+    }
+
     const updatedMembers = project.members.filter((m) => m.uid !== userId);
     await this.updateProject(projectId, { members: updatedMembers });
 

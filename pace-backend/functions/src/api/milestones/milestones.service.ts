@@ -1,6 +1,7 @@
 import to from "await-to-js";
 import { db } from "../../shared/database/admin";
 import { databaseCollections } from "../../shared/enums/database-collections.enum";
+import { firebaseHelper } from "../../shared/services/firebase-helper.service";
 import { paceLoggingService } from "../../utils/services/logger";
 import { projectService } from "../projects/projects.service";
 import { Milestone } from "./milestones.model";
@@ -103,6 +104,19 @@ class MilestonesSerice {
       batch.delete(doc.ref);
     });
     await batch.commit();
+  }
+
+  /**
+   * Get milestones for project
+   * @param {string} projectId
+   */
+  public async getMilestonesForProject(projectId: string) {
+    paceLoggingService.log(`Getting milestones for project ${projectId}`);
+
+    const { docs } = await db.collection(databaseCollections.MILESTONES).where("projectId", "==", projectId).get();
+    const milestones = firebaseHelper.docsToObjects(docs) as Milestone[];
+
+    return milestones ?? [];
   }
 
   /**

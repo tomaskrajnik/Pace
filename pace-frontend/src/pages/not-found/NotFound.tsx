@@ -1,12 +1,13 @@
 import React from 'react';
 import paceLogo from '../../assets/svg/pace-logo.svg';
-
 import Screen from '../../components/layout/Screen';
 import { Link } from 'react-router-dom';
 import NormalText from '../../components/common/NormalText';
 import { AuthRoutes } from '../../routes/routes.types';
+import useDocumentTitle from '../../hooks/useDocTitle';
 
-const Login: React.FC = () => {
+const NotFound: React.FC = () => {
+    useDocumentTitle('Pace - Not found');
     return (
         <Screen withoutopPadding>
             <div className="min-h-full flex justify-center py-10 px-4 sm:px-6 lg:px-8">
@@ -31,4 +32,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default NotFound;

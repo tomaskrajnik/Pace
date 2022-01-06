@@ -10,6 +10,7 @@ import AuthService from '../../services/AuthService';
 import NormalButton from '../../components/common/NormalButton';
 import { NonAuthRoutes } from '../../routes/routes.types';
 import { Link } from 'react-router-dom';
+import useDocumentTitle from '../../hooks/useDocTitle';
 
 interface IFormInputs {
     email: string;
@@ -20,6 +21,7 @@ const schema = yup.object().shape({
 });
 
 const ResetPassword: React.FC = () => {
+    useDocumentTitle('Pace - Reset password');
     const {
         control,
         handleSubmit,

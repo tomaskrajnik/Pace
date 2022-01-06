@@ -13,6 +13,7 @@ import { NonAuthRoutes } from '../../routes/routes.types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import NormalButton from '../../components/common/NormalButton';
+import useDocumentTitle from '../../hooks/useDocTitle';
 
 interface IFormInputs {
     name: string;
@@ -27,8 +28,8 @@ const schema = yup.object().shape({
 });
 
 const Signup: React.FC = () => {
+    useDocumentTitle('Pace - Signup');
     const thunkDispatch = useDispatch<AuthThunkDispatcher>();
-
     const {
         control,
         handleSubmit,

@@ -1,1 +1,3 @@
 node_modules/
+pace-frontend/src/config/config-dev.ts
+pace-backend/functions/src/config/config-dev.ts
